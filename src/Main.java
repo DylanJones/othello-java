@@ -55,15 +55,15 @@ public class Main extends Application {
 
         // Set up the initial disks on the game board.
         board[3][3] = 1;
-        board[4][4] = 1;
-        board[4][3] = 2;
         board[3][4] = 2;
+        board[4][3] = 2;
+        board[4][4] = 1;
 
         // Create the disks corresponding to the value on the game board.
         for (int i = 0; i < board.length; ++i) {
             for (int j = 0; j < board[i].length; ++j) {
                 if (board[i][j] != 0) {
-                    Circle circle = new Circle(tileSize.width * j + tileSize.width / 2, tileSize.height * i + tileSize.height / 2, 32, board[i][j] == 1 ? Color.WHITE : Color.BLACK);
+                    Circle circle = new Circle(tileSize.width * j + tileSize.width / 2, tileSize.height * i + tileSize.height / 2, (tileSize.width + tileSize.height) / 5, board[i][j] == 1 ? Color.WHITE : Color.BLACK);
                     pane.getChildren().add(circle);
                 }
             }
