@@ -16,6 +16,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
+        Game othello = new Game(stage, 600, 600, 8, 8);
+
+        /*
         // Set the title of the window.
         stage.setTitle("Othello Java - Dylan Jones, Minh Vu");
         // Prevent the window from being resized.
@@ -72,5 +75,6 @@ public class Main extends Application {
         Scene scene = new Scene(pane, windowSize.width, windowSize.height);
         stage.setScene(scene);
         stage.show();
+        */
     }
 }
