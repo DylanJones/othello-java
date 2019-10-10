@@ -52,7 +52,6 @@ public class State {
      * @return the array representation of the board
      */
     public int[] toBoxBoard() {
-
         int[] board = new int[64];
         for (int i = 0; i < 64; i++) {
             if ((black << i & 1) == 1) {
@@ -68,9 +67,20 @@ public class State {
 
 
     /**
-     * Get the locations of all legal moves from the current state.
+     * Get the locations of all legal moves for the given player from this board.
+     *
+     * @return a bitmask with valid moves as ones.
      */
-    public long legalMoves() {
+    public long legalMoves(int player) {
+        return 0;
+    }
+
+    /**
+     *  Assuming p1 is moving, smear p1 in the specified direction and find legal moves.
+     *  This method uses the naive "sequential algorithm" because I can actually understand it.
+     */
+    private long getMovesPartial(long p1, long mask, int dir) {
+        long flip;
         return 0;
     }
 
