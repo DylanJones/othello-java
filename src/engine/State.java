@@ -29,7 +29,7 @@ public class State {
     }
 
     /**
-     *  Create a new board from an array board, automatically converting it to a bitboard.
+     * Create a new board from an array board, automatically converting it to a bitboard.
      */
     public State(int[] intBoard, int movingPlayer) {
         long black = 0;
@@ -68,7 +68,7 @@ public class State {
 
 
     /**
-     *  Get the locations of all legal moves from the current state.
+     * Get the locations of all legal moves from the current state.
      */
     public long legalMoves() {
         return 0;

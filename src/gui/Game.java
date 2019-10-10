@@ -55,6 +55,10 @@ public class Game {
         return player;
     }
 
+    public Board getBoard() {
+        return board;
+    }
+
     public void update() {
         root.getChildren().clear();
         root.getChildren().addAll(board.getTiles());
