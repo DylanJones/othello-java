@@ -21,9 +21,10 @@ public class Board {
     private Disk selected;
 
     public Board(int width, int height, Dimension windowSize) {
-        board = new int[height * width];
-        tiles = new Rectangle[64];
-        disks = new Circle[64];
+        int length = height * width;
+        board = new int[length];
+        tiles = new Rectangle[length];
+        disks = new Circle[length];
         tileSize = new Dimension(windowSize.width / width, windowSize.height / height);
 
         // Set up the initial disks on the game board.
@@ -83,7 +84,9 @@ public class Board {
         }
     }
 
-    // Change all the colors of the tiles according to int board[];
+    /**
+     * Change all the colors of the tiles according to int board[];
+     */
     public void update() {
         for (int i = 0; i < disks.length; ++i) {
             disks[i].setFill(board[i] == 0 ? tiles[i].getFill() : (board[i] == 1 ? Color.WHITE : Color.BLACK));
@@ -123,7 +126,7 @@ public class Board {
     public void setBoard(int[] board) {
         this.board = board;
     }
-    
+
     public Dimension getTileSize() {
         return tileSize;
     }
