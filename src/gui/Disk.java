@@ -1,3 +1,4 @@
+package gui;
 
 import javafx.scene.shape.Circle;
 
