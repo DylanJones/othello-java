@@ -119,4 +119,12 @@ public class Board {
     public Disk getSelected() {
         return selected;
     }
+
+    public void setBoard(int[] board) {
+        this.board = board;
+    }
+    
+    public Dimension getTileSize() {
+        return tileSize;
+    }
 }
