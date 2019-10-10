@@ -59,7 +59,14 @@ public class Game {
         return board;
     }
 
+    // Call this once you have changed the disk colors to repaint the screen
     public void update() {
+        board.update();
+        repaint();
+    }
+
+    // Clears the root and redraws the all the disks and tiles
+    public void repaint() {
         root.getChildren().clear();
         root.getChildren().addAll(board.getTiles());
         // Creates a red border around the selected disk.
