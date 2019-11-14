@@ -8,16 +8,13 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.awt.Dimension;
+import java.util.Collection;
 
 public class Game {
     private static Game instance;
     private Stage stage;
     private Scene scene;
     private Color player;
-
-    public Group getRoot() {
-        return root;
-    }
 
     private Group root;
 
@@ -41,6 +38,8 @@ public class Game {
         player = Color.BLACK;
 
         instance = this;
+
+
     }
 
     public static Game getInstance() {
@@ -59,8 +58,13 @@ public class Game {
         return board;
     }
 
+    public Group getRoot() {
+        return root;
+    }
+
     // Call this once you have changed the disk colors to repaint the screen
     public void update() {
+        stage.setTitle((player.equals(Color.BLACK) ? "BLACK" : "WHITE") + " IS MOVING");
         board.update();
         repaint();
     }
@@ -69,10 +73,6 @@ public class Game {
     public void repaint() {
         root.getChildren().clear();
         root.getChildren().addAll(board.getTiles());
-        // Creates a red border around the selected disk.
-        if (board.getSelected() != null) {
-            root.getChildren().add(new Circle(board.getSelected().getCircle().getCenterX(), board.getSelected().getCircle().getCenterY(), board.getSelected().getCircle().getRadius() * 1.1, Color.RED));
-        }
         root.getChildren().addAll(board.getDisks());
     }
 }
