@@ -65,12 +65,25 @@ public class Board {
             // Draw a disk for each tile, but some disks are the same color as the tile, all this is needed is to change the color of the tile based one player moves.
             Disk disk = new Disk(new Circle(tileSize.width * x + tileSize.width / 2, tileSize.height * y + tileSize.height / 2, (tileSize.width + tileSize.height) / 5, board[i] == 0 ? (color ? Color.GREEN : Color.OLIVE) : (board[i] == 1 ? Color.WHITE : Color.BLACK)), new Point(x, y));
             disk.getCircle().addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-                if (disk.getCircle().getFill().equals(Game.getInstance().getPlayer())) {
-                    // Indicates to the player which tile is selected.
-                    Game.getInstance().setStageTitle("Selected: X" + disk.getPosition().x + " Y" + disk.getPosition().y);
-                    selected = disk;
+                if (selected == null) {
+                    if (disk.getCircle().getFill().equals(Game.getInstance().getPlayer())) {
+                        // Indicates to the player which tile is selected.
+                        Game.getInstance().setStageTitle("Selected: X" + disk.getPosition().x + " Y" + disk.getPosition().y);
+                        selected = disk;
+                    } else {
+                        Game.getInstance().setStageTitle("Invalid Selection");
+                    }
                 } else {
-                    Game.getInstance().setStageTitle("Invalid Selection");
+                    if (disk.getCircle().getFill().equals(Color.OLIVE) || disk.getCircle().getFill().equals(Color.GREEN)) {
+                        // if (isValidMove()) {
+                        // disk.getCircle.setFill(Game.getInstance.getPlayer());
+                        // selected = null;
+                        // flip player color;
+                        // }
+                    } else {
+                        Game.getInstance().setStageTitle("Invalid Selection");
+                        selected = null;
+                    }
                 }
 
                 Game.getInstance().update();
