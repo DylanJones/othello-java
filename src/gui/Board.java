@@ -57,13 +57,13 @@ public class Board {
             color = i % height == (height - 1) != color;
 
             // Create a disk object that is drawn in the center of the corresponding board tile. Associate the index to signify the position of the tile on the board.
-            Disk disk = new Disk(new Circle(tileSize.width * x + tileSize.width / 2, tileSize.height * y + tileSize.height / 2, (tileSize.width + tileSize.height) / 5), i);
+            Disk disk = new Disk(new Circle(tileSize.width * x + tileSize.width / 2, tileSize.height * y + tileSize.height / 2, (tileSize.width + tileSize.height) / 4.5), i);
             // Add an event for when the mouse clicks on the disk.
             disk.getCircle().addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
                 // Ensure that the selected location of the player is an open tile.
                 if (disk.getCircle().getFill().equals(Color.OLIVE) || disk.getCircle().getFill().equals(Color.GREEN)) {
                     // If it is a valid move, update the board and switch the player's color.
-                    if (isValidMove()) {
+                    if (isValidMove(disk.getIndex())) {
                         board[disk.getIndex()] = Game.getInstance().getPlayer();
                         Game.getInstance().nextPlayer();
                     }
@@ -74,7 +74,7 @@ public class Board {
         }
     }
 
-    private boolean isValidMove() {
+    private boolean isValidMove(int index) {
         return true;
     }
 

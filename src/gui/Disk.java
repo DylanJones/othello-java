@@ -2,7 +2,7 @@ package gui;
 
 import javafx.scene.shape.Circle;
 
-import java.awt.Point;
+import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 
