@@ -1,8 +1,8 @@
 package engine;
 
-import java.util.Arrays;
+import java.io.Serializable;
 
-public class State {
+public class State implements Serializable {
     // Weight matrix for a basic heuristic function.
     private final static int[] SQUARE_WEIGHTS = new int[]{
             120, -20, 20, 5, 5, 20, -20, 120,
