@@ -14,6 +14,10 @@ public class Main extends Application {
         launch(args);
     }
 
+    /**
+     * Create the menu and prompts the player with the choice of multiplayer or singleplayer
+     * @param stage the JavaFX stage
+     */
     @Override
     public void start(Stage stage) {
         Alert alert = new Alert(AlertType.NONE);
@@ -29,7 +33,6 @@ public class Main extends Application {
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get().equals(singleplayer)) {
-            Game othello = new Game(stage, 600, 600, 8, 8);
         } else if (result.get().equals(multiplayer)) {
             Game othello = new Game(stage, 600, 600, 8, 8);
         }

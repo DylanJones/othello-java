@@ -24,6 +24,14 @@ public class Game {
         BLACK,
     }
 
+    /**
+     * Start the game and initialize everything
+     * @param stage the JavaFX stage
+     * @param windowWidth the width of the window in pixels
+     * @param windowHeight the height of the window in pixels
+     * @param boardWidth the number of tiles on the board horizontally
+     * @param boardHeight the number of tiles on the board vertically
+     */
     public Game(Stage stage, int windowWidth, int windowHeight, int boardWidth, int boardHeight) {
         this.stage = stage;
         this.stage.resizableProperty().setValue(false);
@@ -44,16 +52,22 @@ public class Game {
         update();
     }
 
+    /**
+     * @return the game instance
+     */
     public static Game getInstance() {
         return instance;
     }
 
+    /**
+     * @return the player value
+     */
     public int getPlayer() {
         return player.ordinal();
     }
 
     /**
-     *
+     * Alternate between the black and white players
      */
     public void nextPlayer() {
         player = player.equals(Player.BLACK) ? Player.WHITE : Player.BLACK;
