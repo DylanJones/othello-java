@@ -110,7 +110,7 @@ public class State implements Serializable {
         for (int i = 0; i < 6; i++) {
             flip |= flip << dir & mask; // smear 6 times _inside_ the bounds
         }
-        return flip << dir; // final smear isn't masked to allow it to go outside the bounds
+        return flip | flip << dir; // final smear isn't masked to allow it to go outside the bounds
     }
 
     /**
@@ -126,7 +126,7 @@ public class State implements Serializable {
         for (int i = 0; i < 6; i++) {
             flip |= flip >>> dir & mask; // smear 6 times _inside_ the bounds
         }
-        return flip >>> dir; // final smear isn't masked to allow it to go outside the bounds
+        return flip | flip >>> dir; // final smear isn't masked to allow it to go outside the bounds
     }
 
     /* HEURISTIC FUNCTIONS */
@@ -177,57 +177,62 @@ public class State implements Serializable {
     }
 
     public State makeMove(int idx) {
-        long flipped = 0;
         long piece = 1L << idx;
+        long flipped = piece;
+        long us = getOurMask();
         long them = getTheirMask();
-        long empty = ~(blackMask | whiteMask);
+        System.out.println(this);
+        printLong(getTheirMask());
+        printLong(blackMask);
         // figure out what flips when we make a move
         {
             // diagonal up left
             long tmp = getMovesPartialRight(piece, them, 9);
-            if ((tmp & empty) != 0) {
+            if ((tmp & us) != 0) {
                 flipped |= tmp;
             }
             // up
             tmp = getMovesPartialRight(piece, them, 8);
-            if ((tmp & empty) != 0) {
+            if ((tmp & us) != 0) {
                 flipped |= tmp;
             }
             // diagonal up right
             tmp = getMovesPartialRight(piece, them, 7);
-            if ((tmp & empty) != 0) {
+            if ((tmp & us) != 0) {
                 flipped |= tmp;
             }
             // left
             tmp = getMovesPartialRight(piece, them, 1);
-            if ((tmp & empty) != 0) {
+            if ((tmp & us) != 0) {
                 flipped |= tmp;
             }
             // right
             tmp = getMovesPartialLeft(piece, them, 1);
-            if ((tmp & empty) != 0) {
+            if ((tmp & us) != 0) {
                 flipped |= tmp;
             }
             // diagonal down left
             tmp = getMovesPartialLeft(piece, them, 7);
-            if ((tmp & empty) != 0) {
+            if ((tmp & us) != 0) {
                 flipped |= tmp;
             }
             // down
+            System.out.println("B R U H");
             tmp = getMovesPartialLeft(piece, them, 8);
-            if ((tmp & empty) != 0) {
+            System.out.println("B R U H");
+            if ((tmp & us) != 0) {
                 flipped |= tmp;
             }
             // diagonal down right
             tmp = getMovesPartialLeft(piece, them, 9);
-            if ((tmp & empty) != 0) {
+            if ((tmp & us) != 0) {
                 flipped |= tmp;
             }
         }
 
         // actually do the flips to their pieces
         them = them & ~flipped;
-        long us = getOurMask() | flipped;
+        us = getOurMask() | flipped;
         return new State(movingColor == BLACK ? us : them, movingColor == WHITE ? us : them, movingColor);
     }
 
@@ -244,7 +249,7 @@ public class State implements Serializable {
                 black |= 1L << i;
             }
         }
-        return new State(lastPlayer == BLACK ? black : white, lastPlayer == BLACK ? white : black, lastPlayer);
+        return new State(black, white, lastPlayer);
     }
 
     @Override
@@ -255,7 +260,17 @@ public class State implements Serializable {
         for (int r = 0; r < 8; r++) {
             s.append("|");
             for (int c = 0; c < 8; c++) {
-                s.append(board[r * 8 + c] == EMPTY ? " " : board[r * 8 + c] == BLACK ? "@" : "O").append("|");
+                switch (board[r * 8 + c]) {
+                    case EMPTY:
+                        s.append(" ").append("|");
+                        break;
+                    case BLACK:
+                        s.append("@").append("|");
+                        break;
+                    case WHITE:
+                        s.append("O").append("|");
+                        break;
+                }
             }
             s.append("\n");
         }
@@ -277,16 +292,16 @@ public class State implements Serializable {
     public static void main(String... args) {
         // starting board
         State s = new State(0b00000000000000000001000000001000000000000000000000000000L, 0b00000000000000000000100000010000000000000000000000000000L, BLACK);
-        s.blackMask = 0b00000000000000000001000000001000000000000000000000000000L;
-        s.whiteMask = 0b00000000000000000000100000010000000000000000000000000000L;
-        s.movingColor = BLACK;
+//        s.blackMask = 0b00000000000000000001000000001000000000000000000000000000L;
+//        s.whiteMask = 0b00000000000000000000100000010000000000000000000000000000L;
+//        s.movingColor = BLACK;
 //        System.out.println(s);
 //        System.out.println(Long.toBinaryString(s.black));
         s = State.fromBoxBoard(new int[]{
                 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 1, 2, 2, 2, 2,
+                0, 0, 0, 1, 2, 0, 0, 0,
                 0, 0, 0, 2, 1, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0,
@@ -294,6 +309,8 @@ public class State implements Serializable {
         }, WHITE);
         System.out.println(s);
         System.out.println();
-        printLong(s.calcLegalMoves());
+        System.out.println(s.makeMove(20));
+//        printLong(1L << 9);
+//        printLong(s.getMovesPartialLeft(1L << 9, 0xFFFFFFFFFFFFFFFL, 7));
     }
 }
