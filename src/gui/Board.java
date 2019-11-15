@@ -19,20 +19,27 @@ public class Board {
     private Rectangle[] tiles;
     private Circle[] disks;
 
+    /**
+     * Initialize all variables, create all disks and tiles, and set up the game board with the initial start pieces.
+     * @param width the width of the game board
+     * @param height the height of the game board
+     * @param windowSize the size of the game window
+     */
     public Board(int width, int height, Dimension windowSize) {
+        // Initialize everything
         int length = height * width;
         board = new int[length];
         tiles = new Rectangle[length];
         disks = new Circle[length];
         tileSize = new Dimension(windowSize.width / width, windowSize.height / height);
 
-        // Set up the initial disks on the game board.
+        // Set up the initial disks on the game board
         board[27] = 1;
         board[28] = 2;
         board[35] = 2;
         board[36] = 1;
 
-        // Used to keep track of the color of the tile.
+        // Used to keep track of the color of the tile
         boolean color = true;
 
         // Iterate through and draw each tile.
@@ -47,7 +54,7 @@ public class Board {
             // Used for alternating the tile color along the row.
             color = !color;
             // Used for alternating the tile color along the column.
-            color = i % 8 == 7 != color;
+            color = i % height == (height - 1) != color;
 
             // Create a disk object that is drawn in the center of the corresponding board tile. Associate the index to signify the position of the tile on the board.
             Disk disk = new Disk(new Circle(tileSize.width * x + tileSize.width / 2, tileSize.height * y + tileSize.height / 2, (tileSize.width + tileSize.height) / 5), i);
@@ -57,7 +64,7 @@ public class Board {
                 if (disk.getCircle().getFill().equals(Color.OLIVE) || disk.getCircle().getFill().equals(Color.GREEN)) {
                     // If it is a valid move, update the board and switch the player's color.
                     if (isValidMove()) {
-                        board[disk.getIndex()] = Game.getInstance().getPlayer().equals(Color.BLACK) ? 2 : 1;
+                        board[disk.getIndex()] = Game.getInstance().getPlayer();
                         Game.getInstance().nextPlayer();
                     }
                 }
@@ -80,10 +87,16 @@ public class Board {
         }
     }
 
+    /**
+     * @return the game board's tiles
+     */
     public Rectangle[] getTiles() {
         return tiles;
     }
 
+    /**
+     * @return the game board's disks
+     */
     public Circle[] getDisks() {
         return disks;
     }

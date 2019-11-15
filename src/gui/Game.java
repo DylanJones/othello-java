@@ -3,23 +3,26 @@ package gui;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.shape.Circle;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.awt.Dimension;
-import java.util.Collection;
 
 public class Game {
     private static Game instance;
     private Stage stage;
     private Scene scene;
-    private Color player;
+    private Player player;
 
     private Group root;
 
     private Dimension windowSize;
     private Board board;
+
+    private enum Player {
+        NONE,
+        WHITE,
+        BLACK,
+    }
 
     public Game(Stage stage, int windowWidth, int windowHeight, int boardWidth, int boardHeight) {
         this.stage = stage;
@@ -34,7 +37,7 @@ public class Game {
         stage.setScene(scene);
         stage.show();
 
-        player = Color.BLACK;
+        player = Player.BLACK;
 
         instance = this;
 
@@ -45,34 +48,30 @@ public class Game {
         return instance;
     }
 
-    public void setStageTitle(String title) {
-        stage.setTitle(title);
+    public int getPlayer() {
+        return player.ordinal();
     }
 
-    public Color getPlayer() {
-        return player;
-    }
-
+    /**
+     *
+     */
     public void nextPlayer() {
-        player = player.equals(Color.BLACK) ? Color.WHITE : Color.BLACK;
+        player = player.equals(Player.BLACK) ? Player.WHITE : Player.BLACK;
     }
 
-    public Board getBoard() {
-        return board;
-    }
-
-    public Group getRoot() {
-        return root;
-    }
-
-    // Call this once you have changed the disk colors to repaint the screen
+    /**
+     * Used to update the game board with new positions and repaint()
+     */
     public void update() {
-        stage.setTitle((player.equals(Color.BLACK) ? "BLACK" : "WHITE") + " IS MOVING");
+        stage.setTitle(player + " IS MOVING");
         board.update();
         repaint();
     }
 
-    // Clears the root and redraws the all the disks and tiles
+    /**
+     * Clear the root and add all tiles and disks back into it
+     * Repaint will redraw everything on the game board
+     */
     public void repaint() {
         root.getChildren().clear();
         root.getChildren().addAll(board.getTiles());
