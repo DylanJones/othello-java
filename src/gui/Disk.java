@@ -8,18 +8,18 @@ import java.util.Set;
 
 public class Disk {
     private Circle circle;
-    private Point position;
+    private int index;
 
     public Circle getCircle() {
         return circle;
     }
 
-    public Point getPosition() {
-        return position;
+    public int getIndex() {
+        return index;
     }
 
-    public Disk(Circle circle, Point position) {
+    public Disk(Circle circle, int index) {
         this.circle = circle;
-        this.position = position;
+        this.index = index;
     }
 }

@@ -23,7 +23,6 @@ public class Game {
 
     public Game(Stage stage, int windowWidth, int windowHeight, int boardWidth, int boardHeight) {
         this.stage = stage;
-        this.stage.setTitle("Othello Java - Dylan Jones, Minh Vu");
         this.stage.resizableProperty().setValue(false);
         this.stage.getIcons().add(new Image("file:res/icon.png"));
         root = new Group();
@@ -39,7 +38,7 @@ public class Game {
 
         instance = this;
 
-
+        update();
     }
 
     public static Game getInstance() {
@@ -52,6 +51,10 @@ public class Game {
 
     public Color getPlayer() {
         return player;
+    }
+
+    public void nextPlayer() {
+        player = player.equals(Color.BLACK) ? Color.WHITE : Color.BLACK;
     }
 
     public Board getBoard() {
