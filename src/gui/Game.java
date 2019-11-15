@@ -6,6 +6,8 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.awt.Dimension;
+import java.io.IOException;
+import java.net.ServerSocket;
 
 public class Game {
     private static Game instance;
@@ -18,6 +20,8 @@ public class Game {
     private Dimension windowSize;
     private Board board;
 
+    private boolean multiplayer;
+
     private enum Player {
         NONE,
         WHITE,
@@ -26,13 +30,14 @@ public class Game {
 
     /**
      * Start the game and initialize everything
-     * @param stage the JavaFX stage
-     * @param windowWidth the width of the window in pixels
+     *
+     * @param stage        the JavaFX stage
+     * @param windowWidth  the width of the window in pixels
      * @param windowHeight the height of the window in pixels
-     * @param boardWidth the number of tiles on the board horizontally
-     * @param boardHeight the number of tiles on the board vertically
+     * @param boardWidth   the number of tiles on the board horizontally
+     * @param boardHeight  the number of tiles on the board vertically
      */
-    public Game(Stage stage, int windowWidth, int windowHeight, int boardWidth, int boardHeight) {
+    public Game(Stage stage, int windowWidth, int windowHeight, int boardWidth, int boardHeight, boolean multiplayer) {
         this.stage = stage;
         this.stage.resizableProperty().setValue(false);
         this.stage.getIcons().add(new Image("file:res/icon.png"));
@@ -46,6 +51,7 @@ public class Game {
         stage.show();
 
         player = Player.BLACK;
+        this.multiplayer = multiplayer;
 
         instance = this;
 
@@ -57,6 +63,13 @@ public class Game {
      */
     public static Game getInstance() {
         return instance;
+    }
+
+    /**
+     * @return whether the game is multiplayer
+     */
+    public boolean isMultiplayer() {
+        return multiplayer;
     }
 
     /**

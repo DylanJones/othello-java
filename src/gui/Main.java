@@ -16,6 +16,7 @@ public class Main extends Application {
 
     /**
      * Create the menu and prompts the player with the choice of multiplayer or singleplayer
+     *
      * @param stage the JavaFX stage
      */
     @Override
@@ -27,14 +28,17 @@ public class Main extends Application {
 
         ButtonType singleplayer = new ButtonType("Singleplayer");
         ButtonType multiplayer = new ButtonType("Multiplayer");
+        ButtonType online = new ButtonType("Online");
         ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-        alert.getButtonTypes().setAll(singleplayer, multiplayer, cancel);
+        alert.getButtonTypes().setAll(singleplayer, multiplayer, online, cancel);
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get().equals(singleplayer)) {
         } else if (result.get().equals(multiplayer)) {
-            Game othello = new Game(stage, 600, 600, 8, 8);
+            Game othello = new Game(stage, 600, 600, 8, 8, true);
+        } else if (result.get().equals(online)) {
+
         }
     }
 }

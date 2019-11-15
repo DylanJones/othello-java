@@ -66,6 +66,10 @@ public class Board {
                     if (isValidMove(disk.getIndex())) {
                         board[disk.getIndex()] = Game.getInstance().getPlayer();
                         Game.getInstance().nextPlayer();
+
+                        if (!Game.getInstance().isMultiplayer()) {
+                            // RUN AI TURN HERE. THEN CONTINUE
+                        }
                     }
                 }
                 Game.getInstance().update();
