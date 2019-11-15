@@ -1,20 +1,13 @@
 package network;
 
-import gui.Disk;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
 public class Client {
-    private int[] whiteBoard = new int[64];
-    private int[] blackBoard = new int[64];
-    private Disk currentDisk;
-
     private Socket socket;
     private Scanner in;
     private PrintWriter out;
@@ -27,8 +20,7 @@ public class Client {
 
     public void play() throws Exception {
         try {
-            System.out.println("Hello");
-            String response = in.nextLine();
+            String response;
 
             while (in.hasNextLine()) {
                 response = in.nextLine();
@@ -36,13 +28,9 @@ public class Client {
                 } else if (response.startsWith("OPPONENT_MOVED")) {
                 } else if (response.startsWith("MESSAGE")) {
                 } else if (response.startsWith("VICTORY")) {
-                    break;
                 } else if (response.startsWith("DEFEAT")) {
-                    break;
                 } else if (response.startsWith("TIE")) {
-                    break;
                 } else if (response.startsWith("OTHER_PLAYER_LEFT")) {
-                    break;
                 }
             }
             out.println("QUIT");

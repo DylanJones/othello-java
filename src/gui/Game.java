@@ -1,19 +1,18 @@
 package gui;
 
+import engine.State;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-import java.awt.Dimension;
-import java.io.IOException;
-import java.net.ServerSocket;
+import java.awt.*;
 
 public class Game {
     private static Game instance;
     private Stage stage;
     private Scene scene;
-    private Player player;
+    private byte player;
 
     private Group root;
 
@@ -21,12 +20,6 @@ public class Game {
     private Board board;
 
     private boolean multiplayer;
-
-    private enum Player {
-        NONE,
-        WHITE,
-        BLACK,
-    }
 
     /**
      * Start the game and initialize everything
@@ -50,7 +43,7 @@ public class Game {
         stage.setScene(scene);
         stage.show();
 
-        player = Player.BLACK;
+        player = State.BLACK;
         this.multiplayer = multiplayer;
 
         instance = this;
@@ -75,15 +68,22 @@ public class Game {
     /**
      * @return the player value
      */
-    public int getPlayer() {
-        return player.ordinal();
+    public byte getPlayer() {
+        return player;
     }
 
     /**
      * Alternate between the black and white players
      */
     public void nextPlayer() {
-        player = player.equals(Player.BLACK) ? Player.WHITE : Player.BLACK;
+        player = player == State.BLACK ? State.WHITE : State.BLACK;
+    }
+
+    /**
+     * @param message the message to be displayed
+     */
+    public void setMessage(String message) {
+        stage.setTitle(message);
     }
 
     /**

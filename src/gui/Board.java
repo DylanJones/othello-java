@@ -1,19 +1,19 @@
 package gui;
 
-import javafx.event.EventHandler;
+import engine.State;
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.transform.Rotate;
+import javafx.util.Duration;
 
-import java.awt.Point;
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.awt.*;
 
 public class Board {
+    private State state;
     private int[] board;
     private Dimension tileSize;
     private Rectangle[] tiles;
@@ -21,8 +21,9 @@ public class Board {
 
     /**
      * Initialize all variables, create all disks and tiles, and set up the game board with the initial start pieces.
-     * @param width the width of the game board
-     * @param height the height of the game board
+     *
+     * @param width      the width of the game board
+     * @param height     the height of the game board
      * @param windowSize the size of the game window
      */
     public Board(int width, int height, Dimension windowSize) {
@@ -56,6 +57,19 @@ public class Board {
             // Used for alternating the tile color along the column.
             color = i % height == (height - 1) != color;
 
+            // Some cool stuff.
+//            RotateTransition rt = new RotateTransition(Duration.millis(1000), tiles[i]);
+//            rt.setAxis(Rotate.Y_AXIS);
+//            rt.setFromAngle(0);
+//            rt.setToAngle(360);
+//            rt.setInterpolator(Interpolator.LINEAR);
+////            rt.setByAngle(180);
+//            rt.setCycleCount(1);
+////            rt.setAutoReverse(true);
+//            rt.play();
+
+            state = State.fromBoxBoard(board, State.BLACK);
+
             // Create a disk object that is drawn in the center of the corresponding board tile. Associate the index to signify the position of the tile on the board.
             Disk disk = new Disk(new Circle(tileSize.width * x + tileSize.width / 2, tileSize.height * y + tileSize.height / 2, (tileSize.width + tileSize.height) / 4.5), i);
             // Add an event for when the mouse clicks on the disk.
@@ -63,7 +77,14 @@ public class Board {
                 // Ensure that the selected location of the player is an open tile.
                 if (disk.getCircle().getFill().equals(Color.OLIVE) || disk.getCircle().getFill().equals(Color.GREEN)) {
                     // If it is a valid move, update the board and switch the player's color.
-                    if (isValidMove(disk.getIndex())) {
+                    if ((state.calcLegalMoves() & (1 << disk.getIndex())) != 0) {
+//                    if (true) {
+                        flip(disk.getCircle());
+                        System.out.println(disk.getIndex());
+
+//                        state = state.makeMove(disk.getIndex());
+//                        System.out.println(state);
+
                         board[disk.getIndex()] = Game.getInstance().getPlayer();
                         Game.getInstance().nextPlayer();
 
@@ -78,6 +99,23 @@ public class Board {
         }
     }
 
+    private void flip(Circle circle) {
+        RotateTransition flip1 = new RotateTransition(Duration.millis(500), circle);
+        flip1.setAxis(Rotate.Y_AXIS);
+        flip1.setFromAngle(0);
+        flip1.setToAngle(90);
+        flip1.setInterpolator(Interpolator.LINEAR);
+        flip1.play();
+        flip1.setOnFinished(e -> {
+            circle.setFill(circle.getFill().equals(Color.BLACK) ? Color.WHITE : Color.BLACK);
+            flip1.setFromAngle(90);
+            flip1.setToAngle(180);
+            flip1.setOnFinished(f -> {
+            });
+            flip1.play();
+        });
+    }
+
     private boolean isValidMove(int index) {
         return true;
     }
@@ -86,8 +124,16 @@ public class Board {
      * Change all the colors of the tiles according to int board[];
      */
     public void update() {
+//        board = state.toBoxBoard();
+        System.out.println(state);
         for (int i = 0; i < disks.length; ++i) {
-            disks[i].setFill(board[i] == 0 ? tiles[i].getFill() : (board[i] == 1 ? Color.WHITE : Color.BLACK));
+            if (board[i] == State.EMPTY) {
+                disks[i].setFill(tiles[i].getFill());
+            } else if (board[i] == State.WHITE) {
+                disks[i].setFill(Color.WHITE);
+            } else {
+                disks[i].setFill(Color.BLACK);
+            }
         }
     }
 
