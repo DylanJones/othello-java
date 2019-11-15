@@ -57,17 +57,6 @@ public class Board {
             // Used for alternating the tile color along the column.
             color = i % height == (height - 1) != color;
 
-            // Some cool stuff.
-//            RotateTransition rt = new RotateTransition(Duration.millis(1000), tiles[i]);
-//            rt.setAxis(Rotate.Y_AXIS);
-//            rt.setFromAngle(0);
-//            rt.setToAngle(360);
-//            rt.setInterpolator(Interpolator.LINEAR);
-////            rt.setByAngle(180);
-//            rt.setCycleCount(1);
-////            rt.setAutoReverse(true);
-//            rt.play();
-
             state = State.fromBoxBoard(board, State.BLACK);
 
             // Create a disk object that is drawn in the center of the corresponding board tile. Associate the index to signify the position of the tile on the board.
@@ -79,14 +68,14 @@ public class Board {
                     // If it is a valid move, update the board and switch the player's color.
                     if ((state.calcLegalMoves() & (1 << disk.getIndex())) != 0) {
 //                    if (true) {
-                        flip(disk.getCircle());
+//                        flip(disk.getCircle());
                         System.out.println(disk.getIndex());
 
-//                        state = state.makeMove(disk.getIndex());
-//                        System.out.println(state);
+                        state = state.makeMove(disk.getIndex());
+                        System.out.println(state);
 
-                        board[disk.getIndex()] = Game.getInstance().getPlayer();
-                        Game.getInstance().nextPlayer();
+//                        board[disk.getIndex()] = Game.getInstance().getPlayer();
+//                        Game.getInstance().nextPlayer();
 
                         if (!Game.getInstance().isMultiplayer()) {
                             // RUN AI TURN HERE. THEN CONTINUE
@@ -124,7 +113,7 @@ public class Board {
      * Change all the colors of the tiles according to int board[];
      */
     public void update() {
-//        board = state.toBoxBoard();
+        board = state.toBoxBoard();
         System.out.println(state);
         for (int i = 0; i < disks.length; ++i) {
             if (board[i] == State.EMPTY) {
