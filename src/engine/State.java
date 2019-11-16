@@ -1,7 +1,8 @@
 package engine;
 
 import java.io.Serializable;
-import java.util.Arrays;
+
+import static engine.Color.*;
 
 public class State implements Serializable {
     // Weight matrix for a basic heuristic function.
@@ -16,56 +17,28 @@ public class State implements Serializable {
             120, -20, 20, 5, 5, 20, -20, 120
     };
 
-    public static final byte EMPTY = 0;
-    public static final byte BLACK = 1;
-    public static final byte WHITE = 2;
-
     // Bitboard representation - the only fields on this object should be black and white bitmasks and the moving player
-    public long blackMask;
-    public long whiteMask;
-    public byte movingColor;
+    public Board board;
+    public Color movingColor;
     public long moveMask;
 
-    public State(long blackMask, long whiteMask, byte lastPlayer) {
-        this.blackMask = blackMask;
-        this.whiteMask = whiteMask;
-        this.movingColor = invert(lastPlayer);
-        moveMask = calcLegalMoves();
-        if (moveMask == 0) {
-            movingColor = lastPlayer;
-            moveMask = calcLegalMoves();
-            if (moveMask == 0) {
-                movingColor = 0;
-            }
-        }
+    public State(long blackMask, long whiteMask, Color movingPlayer) {
+        this(new Board(blackMask, whiteMask), movingPlayer);
     }
 
-
-    /**
-     * Convert a bitboard pair into a boxed, array representation.
-     *
-     * @return the array representation of the board
-     */
-    public int[] toBoxBoard() {
-        int[] board = new int[64];
-        for (int i = 0; i < 64; i++) {
-            if (((blackMask >>> i) & 1) == 1) {
-                board[i] = BLACK;
-            } else if (((whiteMask >>> i) & 1) == 1) {
-                board[i] = WHITE;
-            } else {
-                board[i] = EMPTY;
-            }
-        }
-        return board;
+    public State(Board board, Color movingPlayer) {
+        this.board = board;
+        this.movingColor = movingPlayer;
+        this.moveMask = calcLegalMoves();
     }
+
 
     public long getOurMask() {
-        return movingColor == BLACK ? blackMask : whiteMask;
+        return movingColor == BLACK ? board.blackMask : board.whiteMask;
     }
 
     public long getTheirMask() {
-        return movingColor == BLACK ? whiteMask : blackMask;
+        return movingColor == BLACK ? board.whiteMask : board.blackMask;
     }
 
 
@@ -146,12 +119,6 @@ public class State implements Serializable {
 
     // util methods
 
-    /**
-     * @return the inverse of the given color.
-     */
-    public static byte invert(byte color) {
-        return color == BLACK ? WHITE : BLACK;
-    }
 
     /**
      * Get all successors of the current node.
@@ -181,97 +148,93 @@ public class State implements Serializable {
         long flipped = piece;
         long us = getOurMask();
         long them = getTheirMask();
-        System.out.println(this);
-        printLong(getTheirMask());
-        printLong(blackMask);
         // figure out what flips when we make a move
         {
             // diagonal up left
-            long tmp = getMovesPartialRight(piece, them, 9);
+            long tmp = getMovesPartialRight(piece, them & 0x007E7E7E7E7E7E00L, 9);
             if ((tmp & us) != 0) {
                 flipped |= tmp;
             }
             // up
-            tmp = getMovesPartialRight(piece, them, 8);
+            tmp = getMovesPartialRight(piece, them & 0x00FFFFFFFFFFFF00L, 8);
             if ((tmp & us) != 0) {
                 flipped |= tmp;
             }
             // diagonal up right
-            tmp = getMovesPartialRight(piece, them, 7);
+            tmp = getMovesPartialRight(piece, them & 0x007E7E7E7E7E7E00L, 7);
             if ((tmp & us) != 0) {
                 flipped |= tmp;
             }
             // left
-            tmp = getMovesPartialRight(piece, them, 1);
+            tmp = getMovesPartialRight(piece, them & 0x7E7E7E7E7E7E7E7EL, 1);
             if ((tmp & us) != 0) {
                 flipped |= tmp;
             }
             // right
-            tmp = getMovesPartialLeft(piece, them, 1);
+            tmp = getMovesPartialLeft(piece, them & 0x7E7E7E7E7E7E7E7EL, 1);
             if ((tmp & us) != 0) {
                 flipped |= tmp;
             }
             // diagonal down left
-            tmp = getMovesPartialLeft(piece, them, 7);
+            tmp = getMovesPartialLeft(piece, them & 0x007E7E7E7E7E7E00L, 7);
             if ((tmp & us) != 0) {
                 flipped |= tmp;
             }
             // down
-            System.out.println("B R U H");
-            tmp = getMovesPartialLeft(piece, them, 8);
-            System.out.println("B R U H");
+            tmp = getMovesPartialLeft(piece, them & 0x00FFFFFFFFFFFF00L, 8);
             if ((tmp & us) != 0) {
                 flipped |= tmp;
             }
             // diagonal down right
-            tmp = getMovesPartialLeft(piece, them, 9);
+            tmp = getMovesPartialLeft(piece, them & 0x007E7E7E7E7E7E00L, 9);
             if ((tmp & us) != 0) {
                 flipped |= tmp;
             }
         }
 
         // actually do the flips to their pieces
-        them = them & ~flipped;
+        them = getTheirMask() & ~flipped;
         us = getOurMask() | flipped;
-        return new State(movingColor == BLACK ? us : them, movingColor == WHITE ? us : them, movingColor);
-    }
 
-    /**
-     * Create a new board from an array board, automatically converting it to a bitboard.
-     */
-    public static State fromBoxBoard(int[] intBoard, byte lastPlayer) {
-        long black = 0;
-        long white = 0;
-        for (int i = 0; i < 64; i++) {
-            if (intBoard[i] == WHITE) {
-                white |= 1L << i;
-            } else if (intBoard[i] == BLACK) {
-                black |= 1L << i;
+        // figure out who's moving next
+        State s = new State(movingColor == BLACK ? us : them, movingColor == WHITE ? us : them, movingColor.invert());
+        if (s.moveMask == 0) {
+            s.movingColor = s.movingColor.invert();
+            s.moveMask = s.calcLegalMoves();
+            if (s.moveMask == 0) {
+                s.movingColor = EMPTY;
             }
         }
-        return new State(black, white, lastPlayer);
+        return s;
+    }
+
+
+    public static State getStartingState() {
+        return new State(0b00000000000000000001000000001000000000000000000000000000L, 0b00000000000000000000100000010000000000000000000000000000L, WHITE);
     }
 
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
+        s.append("Moving: ").append(movingColor).append('\n');
         s.append("\033[4m"); // underline
-        int[] board = toBoxBoard();
+        Color[] boxBoard = board.toBoxBoard();
         for (int r = 0; r < 8; r++) {
-            s.append("|");
             for (int c = 0; c < 8; c++) {
-                switch (board[r * 8 + c]) {
-                    case EMPTY:
-                        s.append(" ").append("|");
-                        break;
-                    case BLACK:
-                        s.append("@").append("|");
-                        break;
-                    case WHITE:
-                        s.append("O").append("|");
-                        break;
+                s.append("|");
+                switch (boxBoard[r * 8 + c]) {
+                    case EMPTY -> {
+                        if ((moveMask >>> (r * 8 + c) & 1) == 1) {
+                            s.append('.');
+                        } else {
+                            s.append(' ');
+                        }
+                    }
+                    case BLACK -> s.append('@');
+                    case WHITE -> s.append('O');
                 }
             }
+            s.append('|');
             s.append("\n");
         }
         s.append("\033[0m"); // reset
@@ -292,24 +255,27 @@ public class State implements Serializable {
     public static void main(String... args) {
         // starting board
         State s = new State(0b00000000000000000001000000001000000000000000000000000000L, 0b00000000000000000000100000010000000000000000000000000000L, BLACK);
-//        s.blackMask = 0b00000000000000000001000000001000000000000000000000000000L;
-//        s.whiteMask = 0b00000000000000000000100000010000000000000000000000000000L;
-//        s.movingColor = BLACK;
-//        System.out.println(s);
-//        System.out.println(Long.toBinaryString(s.black));
-        s = State.fromBoxBoard(new int[]{
-                0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 1, 2, 0, 0, 0,
-                0, 0, 0, 2, 1, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0,
-        }, WHITE);
+        s = new State(Board.fromBoxBoard(new Color[]{
+                EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+                EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+                EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+                EMPTY, EMPTY, EMPTY, BLACK, WHITE, EMPTY, EMPTY, EMPTY,
+                EMPTY, EMPTY, BLACK, WHITE, WHITE, WHITE, EMPTY, EMPTY,
+                EMPTY, EMPTY, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK,
+                BLACK, BLACK, BLACK, WHITE, BLACK, WHITE, EMPTY, EMPTY,
+                WHITE, WHITE, WHITE, WHITE, WHITE, BLACK, EMPTY, EMPTY,
+//                EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//                EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//                EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//                EMPTY, EMPTY, EMPTY, BLACK, WHITE, EMPTY, EMPTY, EMPTY,
+//                EMPTY, EMPTY, EMPTY, WHITE, BLACK, EMPTY, EMPTY, EMPTY,
+//                EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//                EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//                EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+        }), WHITE);
         System.out.println(s);
         System.out.println();
-        System.out.println(s.makeMove(20));
+        System.out.println(s.makeMove(38));
 //        printLong(1L << 9);
 //        printLong(s.getMovesPartialLeft(1L << 9, 0xFFFFFFFFFFFFFFFL, 7));
     }

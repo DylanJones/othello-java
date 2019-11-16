@@ -1,5 +1,6 @@
 package gui;
 
+import engine.Color;
 import engine.State;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -9,10 +10,10 @@ import javafx.stage.Stage;
 import java.awt.*;
 
 public class Game {
-    private static Game instance;
     private Stage stage;
     private Scene scene;
-    private byte player;
+//    private Color player;
+    public State state;
 
     private Group root;
 
@@ -34,49 +35,35 @@ public class Game {
         this.stage = stage;
         this.stage.resizableProperty().setValue(false);
         this.stage.getIcons().add(new Image("file:res/icon.png"));
+        state = State.getStartingState();
         root = new Group();
         windowSize = new Dimension(windowWidth, windowHeight);
-        board = new Board(boardWidth, boardHeight, windowSize);
+        board = new Board(this, boardWidth, boardHeight, windowSize);
         root.getChildren().addAll(board.getTiles());
         root.getChildren().addAll(board.getDisks());
         scene = new Scene(root, windowSize.width, windowSize.height);
         stage.setScene(scene);
         stage.show();
 
-        player = State.BLACK;
         this.multiplayer = multiplayer;
 
-        instance = this;
+//        instance = this;
 
         update();
     }
 
-    /**
-     * @return the game instance
-     */
-    public static Game getInstance() {
-        return instance;
-    }
+//    /**
+//     * @return the game instance
+//     */
+//    public static Game getInstance() {
+//        return instance;
+//    }
 
     /**
      * @return whether the game is multiplayer
      */
     public boolean isMultiplayer() {
         return multiplayer;
-    }
-
-    /**
-     * @return the player value
-     */
-    public byte getPlayer() {
-        return player;
-    }
-
-    /**
-     * Alternate between the black and white players
-     */
-    public void nextPlayer() {
-        player = player == State.BLACK ? State.WHITE : State.BLACK;
     }
 
     /**
@@ -90,7 +77,7 @@ public class Game {
      * Used to update the game board with new positions and repaint()
      */
     public void update() {
-        stage.setTitle(player + " IS MOVING");
+        stage.setTitle((state.movingColor == Color.BLACK ? "BLACK" : "WHITE") + " IS MOVING");
         board.update();
         repaint();
     }

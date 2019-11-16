@@ -11,7 +11,7 @@ The backend has been somewhat integrated into the front end. There is some cohes
 
 What is currently being implmented:
 A strong AI is being developed.
-Game logic, such as legal moves and win conditions, are being integrated into the back end.
+A fancier frontend is also being developed
 
 
 What has not been implement:
