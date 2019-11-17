@@ -77,7 +77,7 @@ public class Board implements Iterable<Color> {
 
     @Override
     public void forEach(Consumer<? super Color> action) {
-        for (var c : this) {
+        for (Color c : this) {
             action.accept(c);
         }
     }

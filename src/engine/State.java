@@ -223,15 +223,19 @@ public class State implements Serializable {
             for (int c = 0; c < 8; c++) {
                 s.append("|");
                 switch (boxBoard[r * 8 + c]) {
-                    case EMPTY -> {
+                    case EMPTY:
                         if ((moveMask >>> (r * 8 + c) & 1) == 1) {
                             s.append('.');
                         } else {
                             s.append(' ');
                         }
-                    }
-                    case BLACK -> s.append('@');
-                    case WHITE -> s.append('O');
+                        break;
+                    case BLACK:
+                        s.append('@');
+                        break;
+                    case WHITE:
+                        s.append('O');
+                        break;
                 }
             }
             s.append('|');
