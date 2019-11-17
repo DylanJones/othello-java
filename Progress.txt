@@ -5,14 +5,18 @@ CS 211-H01
 Final Project Progress Report
 
 What has been implemented:
-Currently, a majority of the front end aspect of the othello has been completed.
-The GUI is repsonsive to player clicking and it updates the game.
-The backend has been somewhat integrated into the front end. There is some cohesiveness in how the tiles are being stored and rendered; however, there is much room for imrovement.
+Local multiplayer for the most part works. The GUI and game logic work well together to produce something that can be played by two players on one machine.
+    Parts of game logic that have been completed include:
+        Getting which tiles are valid to move.
+        Flipping the tiles after a move.
+        Switching the between the players.
 
-What is currently being implmented:
+What is currently being implemented:
 A strong AI is being developed.
-A fancier frontend is also being developed
-
+A fancier frontend is also being developed.
+    The framework for tile flipping animation has been developed but needs to be integrated into the backend.
+Rigorous testing to ensure win conditions and correct passing of players.
 
 What has not been implement:
-Multiplayer support because of the need for complete game logic.
+Multiplayer support has been started.
+    Research has been done and we are reviewing variations of online Tic-Tac-Toe and attempting to mirror that in Othello.
