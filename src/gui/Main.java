@@ -6,7 +6,9 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import network.Client;
 
+import java.io.IOException;
 import java.util.Optional;
 
 public class Main extends Application {
@@ -36,9 +38,14 @@ public class Main extends Application {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get().equals(singleplayer)) {
         } else if (result.get().equals(multiplayer)) {
-            Game othello = new Game(stage, 600, 600, 8, 8, true);
+            new Game(stage, 600, 600, 8, 8);
         } else if (result.get().equals(online)) {
-
+            try {
+                Client c = new Client("localhost");
+                new Game(stage, 600, 600, 8, 8, c);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

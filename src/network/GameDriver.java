@@ -33,21 +33,26 @@ public class GameDriver implements Runnable {
         // p1 is black, p2 is white
         gameState = State.getStartingState();
         try {
+            Thread.sleep(500); // give the guis time to initalize
             p1in = new Scanner(player1.getInputStream());
             p1out = new PrintWriter(player1.getOutputStream());
             p2in = new Scanner(player2.getInputStream());
             p2out = new PrintWriter(player2.getOutputStream());
-        } catch (IOException ignored) {
+        } catch (IOException | InterruptedException ignored) {
         }
         while (gameState.movingColor != EMPTY) {
             int move;
             if (gameState.movingColor == BLACK) {
+                System.out.println("Waiting for Black...");
                 move = getMove(p1in, p1out);
             } else {
+                System.out.println("Waiting for White...");
                 move = getMove(p2in, p2out);
             }
+            System.out.println("Sending moves....");
+            sendMove(move);
             gameState = gameState.makeMove(move);
-            sendBoard();
+//            sendBoard();
         }
     }
 
@@ -55,18 +60,29 @@ public class GameDriver implements Runnable {
         int move = -1;
         while (!gameState.isLegalMove(move)) {
             out.println("get_move " + gameState.movingColor);
+            out.flush();
+            System.out.println("sent cmd");
             move = sc.nextInt();
         }
+        System.out.println("We got our response back from " + gameState.movingColor + " - it was move #" + move);
         return move;
     }
 
+    private void sendMove(int move) {
+        String line = "move_made " + move;
+        p1out.println(line);
+        p2out.println(line);
+        p1out.flush();
+        p2out.flush();
+    }
+
     private void sendBoard() {
-        StringBuilder sb  = new StringBuilder("update_board ");
+        StringBuilder sb = new StringBuilder("update_board ");
         for (Color color : gameState.board) {
             sb.append(color);
             sb.append(" ");
         }
-        sb.deleteCharAt(sb.length()-1); // get rid of the trailing space
+        sb.deleteCharAt(sb.length() - 1); // get rid of the trailing space
         p1out.println(sb.toString());
         p2out.println(sb.toString());
     }

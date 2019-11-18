@@ -71,14 +71,16 @@ public class Board {
                 // Ensure that the selected location of the player is an open tile.
                 if (disk.getCircle().getFill().equals(Color.OLIVE) || disk.getCircle().getFill().equals(Color.GREEN)) {
                     // If it is a valid move, update the board and switch the player's color.
-                    if (parent.state.isLegalMove(disk.getIndex())) {
-                        System.out.println(disk.getIndex());
-
-                        parent.state = parent.state.makeMove(disk.getIndex());
-                        System.out.println(parent.state);
-
-                        if (!parent.isMultiplayer()) {
-                            // RUN AI TURN HERE. THEN CONTINUE
+                    if (parent.state.isLegalMove(disk.getIndex()) &&
+                            (parent.state.movingColor == parent.playerColor || !parent.isLocalMultiplayer())) {
+                        if (parent.isLocalMultiplayer()) {
+                            System.out.println("Disc got a valid local multiplayer move!");
+                            parent.state = parent.state.makeMove(disk.getIndex());
+                            System.out.println(parent.state);
+                        } else if (parent.isOnline()) {
+                            System.out.println("Disc got a valid online multiplayer move!");
+                            parent.client.makeMove(disk.getIndex());
+                        } else {// AI game
                         }
                     }
                 }
