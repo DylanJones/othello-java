@@ -5,19 +5,6 @@ import java.io.Serializable;
 import static engine.Color.*;
 
 public class State implements Serializable {
-    // Weight matrix for a basic heuristic function.
-    private final static int[] SQUARE_WEIGHTS = new int[]{
-            120, -20, 20, 5, 5, 20, -20, 120,
-            -20, -40, -5, -5, -5, -5, -40, -20,
-            20, -5, 15, 3, 3, 15, -5, 20,
-            5, -5, 3, 3, 3, 3, -5, 5,
-            5, -5, 3, 3, 3, 3, -5, 5,
-            20, -5, 15, 3, 3, 15, -5, 20,
-            -20, -40, -5, -5, -5, -5, -40, -20,
-            120, -20, 20, 5, 5, 20, -20, 120
-    };
-
-    // Bitboard representation - the only fields on this object should be black and white bitmasks and the moving player
     public final Board board;
     public Color movingColor;
     public long moveMask;
@@ -102,20 +89,6 @@ public class State implements Serializable {
         return flip | flip >>> dir; // final smear isn't masked to allow it to go outside the bounds
     }
 
-    /* HEURISTIC FUNCTIONS */
-    public int weightSquare() {
-        int out = 0;
-        long us = getOurMask();
-        long them = getTheirMask();
-        for (int i = 0; i < 64; i++) {
-            if ((us << i & 1) == 1) {
-                out += SQUARE_WEIGHTS[i];
-            } else if ((them << i & 1) == 1) {
-                out -= SQUARE_WEIGHTS[i];
-            }
-        }
-        return out;
-    }
 
     // util methods
 
@@ -137,18 +110,12 @@ public class State implements Serializable {
      */
     public State[] getChildren() {
         State[] c = new State[Long.bitCount(moveMask)];
-        long moves = moveMask;
-        int moveIdx = 0;
-        for (int i = 0; moves != 0; i++) {
-            while ((moves & 1) == 0) {
-                moves >>>= 1;
-                moveIdx++;
+        int arrIdx = 0;
+        for (int i = 0; i < 64; i++) {
+            if ((moveMask & 1L << i) == 0) {
+                continue;
             }
-            moves >>>= 1;
-            c[i] = makeMove(moveIdx);
-        }
-        if (true) {
-            throw new RuntimeException();
+            c[arrIdx++] = makeMove(i);
         }
         return c;
     }
@@ -158,6 +125,9 @@ public class State implements Serializable {
         long flipped = piece;
         long us = getOurMask();
         long them = getTheirMask();
+        if ((piece & moveMask) == 0) {
+            throw new RuntimeException("UR BAD");
+        }
         // figure out what flips when we make a move
         {
             // diagonal up left

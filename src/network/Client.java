@@ -55,18 +55,6 @@ public class Client implements Runnable {
                             System.exit(23);
                         }
                         break;
-//                    case "update_board":
-//                        Color[] box = new Color[64];
-//                        for (int i = 0; i < 64; i++) {
-//                            box[i] = Color.valueOf(line[i + 1]);
-//                        }
-//                        if (game != null) {
-//                            game.state =
-//                        } else {
-//                            System.err.println("AAAAAAA GAME NOT INITIALIZED ABORT ABORT ABORT");
-//                            System.exit(23);
-//                        }
-//                        break;
                     default:
                         System.out.println("UNRECOGNIZED COMMAND: \"" + command + "\" - line = \"" + Arrays.toString(line) + "\"");
                 }

@@ -1,5 +1,6 @@
 package gui;
 
+import engine.Minimax;
 import javafx.application.Application;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -37,6 +38,8 @@ public class Main extends Application {
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get().equals(singleplayer)) {
+            System.out.println("Starting a new singleplayer game...");
+            new Game(stage, 600, 600, 8, 8, new Minimax());
         } else if (result.get().equals(multiplayer)) {
             new Game(stage, 600, 600, 8, 8);
         } else if (result.get().equals(online)) {

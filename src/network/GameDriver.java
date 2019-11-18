@@ -52,7 +52,6 @@ public class GameDriver implements Runnable {
             System.out.println("Sending moves....");
             sendMove(move);
             gameState = gameState.makeMove(move);
-//            sendBoard();
         }
     }
 
@@ -74,16 +73,5 @@ public class GameDriver implements Runnable {
         p2out.println(line);
         p1out.flush();
         p2out.flush();
-    }
-
-    private void sendBoard() {
-        StringBuilder sb = new StringBuilder("update_board ");
-        for (Color color : gameState.board) {
-            sb.append(color);
-            sb.append(" ");
-        }
-        sb.deleteCharAt(sb.length() - 1); // get rid of the trailing space
-        p1out.println(sb.toString());
-        p2out.println(sb.toString());
     }
 }

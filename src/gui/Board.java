@@ -2,6 +2,7 @@ package gui;
 
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
+import javafx.application.Platform;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -81,6 +82,14 @@ public class Board {
                             System.out.println("Disc got a valid online multiplayer move!");
                             parent.client.makeMove(disk.getIndex());
                         } else {// AI game
+                            System.out.println("Disc got a valid move against an AI!");
+                            parent.state = parent.state.makeMove(disk.getIndex());
+                            System.out.println(parent.state);
+                            new Thread(() -> {
+                                var move = parent.ai.findMove(parent.state, parent.playerColor.invert());
+                                parent.state = parent.state.makeMove(move);
+                                Platform.runLater(parent::update);
+                            }).start();
                         }
                     }
                 }
