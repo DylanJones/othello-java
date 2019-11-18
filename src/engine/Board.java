@@ -5,8 +5,8 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 
 public class Board implements Iterable<Color> {
-    public long blackMask;
-    public long whiteMask;
+    public final long blackMask;
+    public final long whiteMask;
 
     public Board(long blackMask, long whiteMask) {
         this.blackMask = blackMask;

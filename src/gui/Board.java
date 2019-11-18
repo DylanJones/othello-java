@@ -1,6 +1,5 @@
 package gui;
 
-import engine.State;
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
 import javafx.scene.input.MouseEvent;
@@ -16,7 +15,6 @@ import static engine.Color.EMPTY;
 import static engine.Color.WHITE;
 
 public class Board {
-//    private State state;
     private Dimension tileSize;
     private final Rectangle[] tiles;
     private final Circle[] disks;
@@ -73,7 +71,7 @@ public class Board {
                 // Ensure that the selected location of the player is an open tile.
                 if (disk.getCircle().getFill().equals(Color.OLIVE) || disk.getCircle().getFill().equals(Color.GREEN)) {
                     // If it is a valid move, update the board and switch the player's color.
-                    if (isValidMove(disk.getIndex())) {
+                    if (parent.state.isLegalMove(disk.getIndex())) {
                         System.out.println(disk.getIndex());
 
                         parent.state = parent.state.makeMove(disk.getIndex());
@@ -105,10 +103,6 @@ public class Board {
             });
             flip1.play();
         });
-    }
-
-    private boolean isValidMove(int index) {
-        return (parent.state.moveMask >>> index & 1) == 1;
     }
 
     /**

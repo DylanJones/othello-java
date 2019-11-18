@@ -18,7 +18,7 @@ public class State implements Serializable {
     };
 
     // Bitboard representation - the only fields on this object should be black and white bitmasks and the moving player
-    public Board board;
+    public final Board board;
     public Color movingColor;
     public long moveMask;
 
@@ -119,6 +119,16 @@ public class State implements Serializable {
 
     // util methods
 
+    /**
+     * Check if the given move is legal on this board state.
+     *
+     * @param move the index of the move
+     * @return if the move is legal
+     */
+    public boolean isLegalMove(int move) {
+        if (move < 0 || move > 64) return false;
+        return (moveMask >>> move & 1) == 1;
+    }
 
     /**
      * Get all successors of the current node.
@@ -245,16 +255,6 @@ public class State implements Serializable {
         return s.toString();
     }
 
-    // TESTING ONLY
-
-    private static void printLong(long l) {
-        State s = new State(l, l, WHITE);
-        s.movingColor = BLACK;
-        System.out.println(l);
-//        System.out.println(Arrays.toString(s.toBoxBoard()));
-        System.out.println(s);
-        System.out.println();
-    }
 
     public static void main(String... args) {
         // starting board

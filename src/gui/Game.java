@@ -12,7 +12,7 @@ import java.awt.*;
 public class Game {
     private Stage stage;
     private Scene scene;
-//    private Color player;
+    public Color playerColor;
     public State state;
 
     private Group root;
@@ -47,30 +47,14 @@ public class Game {
 
         this.multiplayer = multiplayer;
 
-//        instance = this;
-
         update();
     }
-
-//    /**
-//     * @return the game instance
-//     */
-//    public static Game getInstance() {
-//        return instance;
-//    }
 
     /**
      * @return whether the game is multiplayer
      */
     public boolean isMultiplayer() {
         return multiplayer;
-    }
-
-    /**
-     * @param message the message to be displayed
-     */
-    public void setMessage(String message) {
-        stage.setTitle(message);
     }
 
     /**

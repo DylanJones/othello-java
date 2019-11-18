@@ -27,8 +27,8 @@ public class Main extends Application {
         alert.setContentText("Please Select The Game Mode");
 
         ButtonType singleplayer = new ButtonType("Singleplayer");
-        ButtonType multiplayer = new ButtonType("Multiplayer");
-        ButtonType online = new ButtonType("Online");
+        ButtonType multiplayer = new ButtonType("Local Multiplayer");
+        ButtonType online = new ButtonType("Online Multiplayer");
         ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
         alert.getButtonTypes().setAll(singleplayer, multiplayer, online, cancel);
