@@ -19,6 +19,7 @@ public class Board {
     private final Rectangle[] tiles;
     private final Circle[] disks;
     private final Game parent;
+    private final int animationTime = 1000;
 
     /**
      * Initialize all variables, create all disks and tiles, and set up the game board with the initial start pieces.
@@ -61,6 +62,7 @@ public class Board {
                 if (disk.getCircle().getFill().equals(Color.OLIVE) || disk.getCircle().getFill().equals(Color.GREEN)) {
                     // If it is a valid move, update the board and switch the player's color.
                     if (parent.state.isLegalMove(disk.getIndex()) && (parent.state.movingColor == parent.playerColor || parent.isLocalMultiplayer())) {
+                        long timeElapsed = System.currentTimeMillis();
                         if (parent.isLocalMultiplayer()) {
                             System.out.println("Disc got a valid local multiplayer move!");
                             parent.state = parent.state.makeMove(disk.getIndex());
@@ -75,6 +77,7 @@ public class Board {
                             new Thread(() -> {
                                 var move = parent.ai.findMove(parent.state, parent.state.movingColor);
 //                                var move = parent.ai.findMove(parent.state, parent.playerColor.invert());
+                                waitForMove(timeElapsed);
                                 parent.state = parent.state.makeMove(move);
                                 Platform.runLater(parent::update);
                             }).start();
@@ -87,11 +90,23 @@ public class Board {
         }
     }
 
+    private void waitForMove(long timeElapsed) {
+        long timeDifference = System.currentTimeMillis() - timeElapsed;
+        System.out.println(timeDifference);
+        if (timeDifference < animationTime) {
+            try {
+                Thread.sleep(animationTime - timeDifference);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * Visually flip a disk from black to white - vice versa.
      */
     private void flip(Circle circle) {
-        RotateTransition flip = new RotateTransition(Duration.millis(500), circle);
+        RotateTransition flip = new RotateTransition(Duration.millis(animationTime / 2.0), circle);
         flip.setAxis(Rotate.Y_AXIS);
         flip.setFromAngle(0);
         flip.setToAngle(90);
