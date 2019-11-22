@@ -11,15 +11,20 @@ import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
 import java.awt.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static engine.Color.*;
 
 public class Board {
     private Dimension tileSize;
     private final Rectangle[] tiles;
-    private final Circle[] disks;
+    private final Disk[] disks;
     private final Game parent;
     private final int animationTime = 1000;
+    private long lastMouseClick;
+    private boolean flipping = false;
 
     /**
      * Initialize all variables, create all disks and tiles, and set up the game board with the initial start pieces.
@@ -33,7 +38,9 @@ public class Board {
         this.parent = parent;
         int length = height * width;
         tiles = new Rectangle[length];
-        disks = new Circle[length];
+        disks = new Disk[length];
+        lastMouseClick = System.currentTimeMillis();
+
         tileSize = new Dimension(windowSize.width / width, windowSize.height / height);
 
         // Used to keep track of the color of the tile
@@ -58,11 +65,19 @@ public class Board {
             Disk disk = new Disk(new Circle(tileSize.width * x + tileSize.width / 2, tileSize.height * y + tileSize.height / 2, (tileSize.width + tileSize.height) / 4.5), i);
             // Add an event for when the mouse clicks on the disk.
             disk.getCircle().addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
+
+                // Prevent the player from clicking if it is too soon or there is still a tile moving or double click weird case.
+                if ((System.currentTimeMillis() - lastMouseClick < animationTime) && (!(disk.getCircle().getFill().equals(Color.OLIVE) || disk.getCircle().getFill().equals(Color.GREEN)) || flipping)) {
+                    return;
+                }
+
                 // Ensure that the selected location of the player is an open tile.
                 if (disk.getCircle().getFill().equals(Color.OLIVE) || disk.getCircle().getFill().equals(Color.GREEN)) {
                     // If it is a valid move, update the board and switch the player's color.
                     if (parent.state.isLegalMove(disk.getIndex()) && (parent.state.movingColor == parent.playerColor || parent.isLocalMultiplayer())) {
                         long timeElapsed = System.currentTimeMillis();
+
+                        // Prevents player from moving before animation is complete.
                         if (parent.isLocalMultiplayer()) {
                             System.out.println("Disc got a valid local multiplayer move!");
                             parent.state = parent.state.makeMove(disk.getIndex());
@@ -84,9 +99,10 @@ public class Board {
                         }
                     }
                 }
+                lastMouseClick = System.currentTimeMillis();
                 parent.update();
             });
-            disks[i] = disk.getCircle();
+            disks[i] = disk;
         }
     }
 
@@ -105,22 +121,26 @@ public class Board {
     /**
      * Visually flip a disk from black to white - vice versa.
      */
-    private void flip(Circle circle) {
-        RotateTransition flip = new RotateTransition(Duration.millis(animationTime / 2.0), circle);
+    private void flip(Disk disk) {
+        // Prevents the flipping the disk while still flipping.
+        flipping = true;
+        RotateTransition flip = new RotateTransition(Duration.millis(animationTime / 2.0), disk.getCircle());
         flip.setAxis(Rotate.Y_AXIS);
         flip.setFromAngle(0);
         flip.setToAngle(90);
         flip.setInterpolator(Interpolator.LINEAR);
         flip.play();
         flip.setOnFinished(e -> {
-            circle.setFill(circle.getFill().equals(Color.BLACK) ? Color.WHITE : Color.BLACK);
+            disk.getCircle().setFill(disk.getCircle().getFill().equals(Color.BLACK) ? Color.WHITE : Color.BLACK);
             flip.setFromAngle(90);
             flip.setToAngle(180);
             flip.setOnFinished(f -> {
+                flipping = false;
             });
             flip.play();
         });
     }
+
 
     /**
      * Change all the colors of the tiles according to int board[];
@@ -129,25 +149,25 @@ public class Board {
         engine.Color[] board = parent.state.board.toBoxBoard();
         for (int i = 0; i < disks.length; ++i) {
             if (parent.state.isLegalMove(i)) {
-                disks[i].setStrokeWidth(2.0);
-                disks[i].setStroke(parent.state.movingColor == BLACK ? Color.BLACK : Color.WHITE);
+                disks[i].getCircle().setStrokeWidth(2.0);
+                disks[i].getCircle().setStroke(parent.state.movingColor == BLACK ? Color.BLACK : Color.WHITE);
             } else {
-                disks[i].setStrokeWidth(0);
+                disks[i].getCircle().setStrokeWidth(0);
             }
 
             if (board[i] == EMPTY) {
-                disks[i].setFill(tiles[i].getFill());
+                disks[i].getCircle().setFill(tiles[i].getFill());
             } else if (board[i] == WHITE) {
-                if (disks[i].getFill().equals(Color.BLACK)) {
+                if (disks[i].getCircle().getFill().equals(Color.BLACK)) {
                     flip(disks[i]);
                 } else {
-                    disks[i].setFill(Color.WHITE);
+                    disks[i].getCircle().setFill(Color.WHITE);
                 }
             } else if (board[i] == BLACK) {
-                if (disks[i].getFill().equals(Color.WHITE)) {
+                if (disks[i].getCircle().getFill().equals(Color.WHITE)) {
                     flip(disks[i]);
                 } else {
-                    disks[i].setFill(Color.BLACK);
+                    disks[i].getCircle().setFill(Color.BLACK);
                 }
             }
         }
@@ -163,7 +183,7 @@ public class Board {
     /**
      * @return the game board's disks
      */
-    public Circle[] getDisks() {
-        return disks;
+    public List<Circle> getDisks() {
+        return Arrays.stream(disks).map(Disk::getCircle).collect(Collectors.toList());
     }
 }
