@@ -1,4 +1,4 @@
-CMD="/usr/lib/jvm/java-13-openjdk/bin/java --add-modules javafx.base,javafx.graphics --add-reads javafx.base=ALL-UNNAMED --add-reads javafx.graphics=ALL-UNNAMED --enable-preview -javaagent:/opt/intellij-idea-ultimate-edition/lib/idea_rt.jar=33687:/opt/intellij-idea-ultimate-edition/bin -Dfile.encoding=UTF-8 -classpath /home/dylan/workspace/CS211/othello-java/bin/production/othello-java:/home/dylan/workspace/CS211/othello-java/lib/javafx-swt.jar:/home/dylan/workspace/CS211/othello-java/lib/javafx.base.jar:/home/dylan/workspace/CS211/othello-java/lib/javafx.controls.jar:/home/dylan/workspace/CS211/othello-java/lib/javafx.fxml.jar:/home/dylan/workspace/CS211/othello-java/lib/javafx.graphics.jar:/home/dylan/workspace/CS211/othello-java/lib/javafx.media.jar:/home/dylan/workspace/CS211/othello-java/lib/javafx.swing.jar:/home/dylan/workspace/CS211/othello-java/lib/javafx.web.jar -p /home/dylan/workspace/CS211/othello-java/lib/javafx.base.jar:/home/dylan/workspace/CS211/othello-java/lib/javafx.graphics.jar "
+CMD=' --add-modules javafx.base,javafx.graphics --add-reads javafx.base=ALL-UNNAMED --add-reads javafx.graphics=ALL-UNNAMED "-javaagent:/c/Program Files/JetBrains/IntelliJ IDEA Community Edition 2019.2.1/lib/idea_rt.jar=53462:/c/Program Files/JetBrains/IntelliJ IDEA Community Edition 2019.2.1/bin" -Dfile.encoding=UTF-8 -classpath "/c/Users/minhd/OneDrive - George Mason University/Documents/IntelliJ/othello-java/target/classes;/c/Program Files/Java/jdk-13.0.1/lib/javafx-swt.jar;/c/Program Files/Java/jdk-13.0.1/lib/javafx.base.jar;/c/Program Files/Java/jdk-13.0.1/lib/javafx.controls.jar;/c/Program Files/Java/jdk-13.0.1/lib/javafx.fxml.jar;/c/Program Files/Java/jdk-13.0.1/lib/javafx.graphics.jar;/c/Program Files/Java/jdk-13.0.1/lib/javafx.media.jar;/c/Program Files/Java/jdk-13.0.1/lib/javafx.swing.jar;/c/Program Files/Java/jdk-13.0.1/lib/javafx.web.jar" -p "/c/Program Files/Java/jdk-13.0.1/lib/javafx.base.jar;/c/Program Files/Java/jdk-13.0.1/lib/javafx.graphics.jar" '
 
 
 
@@ -11,7 +11,7 @@ cd bin/production/othello-java
 CMD="$CMD gui.Main"
 echo $CMD
 
-$CMD
+"/c/Program Files/Java/jdk-13.0.1/bin/java" $CMD
 #OUTPUT="$($CMD 2>&1)"
 echo $OUTPUT
 MODULE="$(echo "$OUTPUT" | grep -oP '(?<=because module ).*(?= does not export)')"

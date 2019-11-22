@@ -31,7 +31,6 @@ public class Game {
     public Client client;
     public SearchAlgorithm ai;
 
-
     /**
      * Start the game and initialize everything
      *

@@ -12,8 +12,7 @@ import javafx.util.Duration;
 
 import java.awt.*;
 
-import static engine.Color.EMPTY;
-import static engine.Color.WHITE;
+import static engine.Color.*;
 
 public class Board {
     private Dimension tileSize;
@@ -54,17 +53,6 @@ public class Board {
             // Used for alternating the tile color along the column.
             color = i % height == (height - 1) != color;
 
-            // Some cool stuff.
-//            RotateTransition rt = new RotateTransition(Duration.millis(1000), tiles[i]);
-//            rt.setAxis(Rotate.Y_AXIS);
-//            rt.setFromAngle(0);
-//            rt.setToAngle(360);
-//            rt.setInterpolator(Interpolator.LINEAR);
-////            rt.setByAngle(180);
-//            rt.setCycleCount(1);
-////            rt.setAutoReverse(true);
-//            rt.play();
-
             // Create a disk object that is drawn in the center of the corresponding board tile. Associate the index to signify the position of the tile on the board.
             Disk disk = new Disk(new Circle(tileSize.width * x + tileSize.width / 2, tileSize.height * y + tileSize.height / 2, (tileSize.width + tileSize.height) / 4.5), i);
             // Add an event for when the mouse clicks on the disk.
@@ -72,8 +60,7 @@ public class Board {
                 // Ensure that the selected location of the player is an open tile.
                 if (disk.getCircle().getFill().equals(Color.OLIVE) || disk.getCircle().getFill().equals(Color.GREEN)) {
                     // If it is a valid move, update the board and switch the player's color.
-                    if (parent.state.isLegalMove(disk.getIndex()) &&
-                            (parent.state.movingColor == parent.playerColor || parent.isLocalMultiplayer())) {
+                    if (parent.state.isLegalMove(disk.getIndex()) && (parent.state.movingColor == parent.playerColor || parent.isLocalMultiplayer())) {
                         if (parent.isLocalMultiplayer()) {
                             System.out.println("Disc got a valid local multiplayer move!");
                             parent.state = parent.state.makeMove(disk.getIndex());
@@ -100,20 +87,23 @@ public class Board {
         }
     }
 
+    /**
+     * Visually flip a disk from black to white - vice versa.
+     */
     private void flip(Circle circle) {
-        RotateTransition flip1 = new RotateTransition(Duration.millis(500), circle);
-        flip1.setAxis(Rotate.Y_AXIS);
-        flip1.setFromAngle(0);
-        flip1.setToAngle(90);
-        flip1.setInterpolator(Interpolator.LINEAR);
-        flip1.play();
-        flip1.setOnFinished(e -> {
+        RotateTransition flip = new RotateTransition(Duration.millis(500), circle);
+        flip.setAxis(Rotate.Y_AXIS);
+        flip.setFromAngle(0);
+        flip.setToAngle(90);
+        flip.setInterpolator(Interpolator.LINEAR);
+        flip.play();
+        flip.setOnFinished(e -> {
             circle.setFill(circle.getFill().equals(Color.BLACK) ? Color.WHITE : Color.BLACK);
-            flip1.setFromAngle(90);
-            flip1.setToAngle(180);
-            flip1.setOnFinished(f -> {
+            flip.setFromAngle(90);
+            flip.setToAngle(180);
+            flip.setOnFinished(f -> {
             });
-            flip1.play();
+            flip.play();
         });
     }
 
@@ -123,12 +113,27 @@ public class Board {
     public void update() {
         engine.Color[] board = parent.state.board.toBoxBoard();
         for (int i = 0; i < disks.length; ++i) {
+            if (parent.state.isLegalMove(i)) {
+                disks[i].setStrokeWidth(2.0);
+                disks[i].setStroke(parent.state.movingColor == BLACK ? Color.BLACK : Color.WHITE);
+            } else {
+                disks[i].setStrokeWidth(0);
+            }
+
             if (board[i] == EMPTY) {
                 disks[i].setFill(tiles[i].getFill());
             } else if (board[i] == WHITE) {
-                disks[i].setFill(Color.WHITE);
-            } else {
-                disks[i].setFill(Color.BLACK);
+                if (disks[i].getFill().equals(Color.BLACK)) {
+                    flip(disks[i]);
+                } else {
+                    disks[i].setFill(Color.WHITE);
+                }
+            } else if (board[i] == BLACK) {
+                if (disks[i].getFill().equals(Color.WHITE)) {
+                    flip(disks[i]);
+                } else {
+                    disks[i].setFill(Color.BLACK);
+                }
             }
         }
     }
