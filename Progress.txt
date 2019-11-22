@@ -10,13 +10,19 @@ Local multiplayer for the most part works. The GUI and game logic work well toge
         Getting which tiles are valid to move.
         Flipping the tiles after a move.
         Switching the between the players.
+Online multiplayer works just as well as local multiplayer, with the caveat that there is no indication of which player you are currrently playing as.
+The framework for playing against an AI has been developed, and an AI of moderate strength has been implemented.
 
 What is currently being implemented:
-A strong AI is being developed.
+A stronger AI is being developed.
 A fancier frontend is also being developed.
     The framework for tile flipping animation has been developed but needs to be integrated into the backend.
+    The frontend needs to show a message when a player has won.
+    The frontend needs to have an indication of when the AI is thinking about its moves.
+There should be more user-accessible options for the AI:
+    Having the option to select different heuristic functions would be nice.
+    Iterative deepening and selection of a time limit for the AI would be good.
+    The user should be able to choose between different search algorithms.
 Rigorous testing to ensure win conditions and correct passing of players.
 
-What has not been implement:
-Multiplayer support has been started.
-    Research has been done and we are reviewing variations of online Tic-Tac-Toe and attempting to mirror that in Othello.
+What has not been implemented:

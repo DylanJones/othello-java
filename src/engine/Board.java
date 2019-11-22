@@ -5,17 +5,6 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 
 public class Board implements Iterable<Color> {
-    // Weight matrix for a basic heuristic function.
-    private final static int[] SQUARE_WEIGHTS = new int[]{
-            120, -20, 20, 5, 5, 20, -20, 120,
-            -20, -40, -5, -5, -5, -5, -40, -20,
-            20, -5, 15, 3, 3, 15, -5, 20,
-            5, -5, 3, 3, 3, 3, -5, 5,
-            5, -5, 3, 3, 3, 3, -5, 5,
-            20, -5, 15, 3, 3, 15, -5, 20,
-            -20, -40, -5, -5, -5, -5, -40, -20,
-            120, -20, 20, 5, 5, 20, -20, 120
-    };
 
     // Bitboard representation - the only fields on this object should be black and white bitmasks and the moving player
     public final long blackMask;
@@ -62,20 +51,6 @@ public class Board implements Iterable<Color> {
         return new Board(black, white);
     }
 
-    /* HEURISTIC FUNCTIONS */
-    public int weightSquare(Color c) {
-        int out = 0;
-        for (int i = 0; i < 64; i++) {
-            if ((blackMask >>> i & 1) == 1) {
-                out += SQUARE_WEIGHTS[i];
-            } else if ((whiteMask >>> i & 1) == 1) {
-                out -= SQUARE_WEIGHTS[i];
-            }
-        }
-        if (c == Color.WHITE)
-            out *= -1;
-        return out;
-    }
 
     @Override
     public Iterator<Color> iterator() {

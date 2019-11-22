@@ -12,6 +12,7 @@ import network.Client;
 import java.awt.*;
 
 import static engine.Color.BLACK;
+import static engine.Color.WHITE;
 
 public class Game {
     private Stage stage;
@@ -71,7 +72,7 @@ public class Game {
         this(stage, windowWidth, windowHeight, boardWidth, boardHeight);
         this.ai = ai;
         this.localMultiplayer = false;
-        playerColor = BLACK;
+        playerColor = WHITE;
     }
 
     /**

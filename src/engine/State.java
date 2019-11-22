@@ -5,6 +5,17 @@ import java.io.Serializable;
 import static engine.Color.*;
 
 public class State implements Serializable {
+    // Weight matrix for a basic heuristic function.
+    private final static int[] SQUARE_WEIGHTS = new int[]{
+            120, -20, 20, 5, 5, 20, -20, 120,
+            -20, -40, -5, -5, -5, -5, -40, -20,
+            20, -5, 15, 3, 3, 15, -5, 20,
+            5, -5, 3, 3, 3, 3, -5, 5,
+            5, -5, 3, 3, 3, 3, -5, 5,
+            20, -5, 15, 3, 3, 15, -5, 20,
+            -20, -40, -5, -5, -5, -5, -40, -20,
+            120, -20, 20, 5, 5, 20, -20, 120
+    };
     public final Board board;
     public Color movingColor;
     public long moveMask;
@@ -89,6 +100,33 @@ public class State implements Serializable {
         return flip | flip >>> dir; // final smear isn't masked to allow it to go outside the bounds
     }
 
+    /* HEURISTIC FUNCTIONS */
+    public int heuristic(Color c) {
+        if (movingColor == EMPTY) {
+            return countColor(c) > 0 ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+        }
+        return weightSquare(c);
+    }
+
+    public int countColor(Color c) {
+        int x = Long.bitCount(board.blackMask) - Long.bitCount(board.whiteMask);
+        if (c == WHITE) x *= -1;
+        return x;
+    }
+
+    public int weightSquare(Color c) {
+        int out = 0;
+        for (int i = 0; i < 64; i++) {
+            if ((board.blackMask << i & 1) == 1) {
+                out += SQUARE_WEIGHTS[i];
+            } else if ((board.whiteMask >>> i & 1) == 1) {
+                out -= SQUARE_WEIGHTS[i];
+            }
+        }
+        if (c == Color.WHITE)
+            out *= -1;
+        return out;
+    }
 
     // util methods
 
@@ -190,7 +228,17 @@ public class State implements Serializable {
 
 
     public static State getStartingState() {
-        return new State(0b00000000000000000001000000001000000000000000000000000000L, 0b00000000000000000000100000010000000000000000000000000000L, WHITE);
+//        return new State(0b00000000000000000001000000001000000000000000000000000000L, 0b00000000000000000000100000010000000000000000000000000000L, WHITE);
+        return new State(Board.fromBoxBoard(new Color[]{
+                EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+                WHITE, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+                EMPTY, WHITE, EMPTY, EMPTY, EMPTY, WHITE, EMPTY, EMPTY,
+                EMPTY, BLACK, WHITE, WHITE, WHITE, WHITE, EMPTY, EMPTY,
+                EMPTY, BLACK, EMPTY, BLACK, WHITE, WHITE, EMPTY, EMPTY,
+                EMPTY, EMPTY, EMPTY, BLACK, EMPTY, EMPTY, EMPTY, EMPTY,
+                EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+                EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+        }), WHITE);
     }
 
     @Override
@@ -201,7 +249,7 @@ public class State implements Serializable {
         Color[] boxBoard = board.toBoxBoard();
         for (int r = 0; r < 8; r++) {
             for (int c = 0; c < 8; c++) {
-                s.append("|");
+                s.append('│');
                 switch (boxBoard[r * 8 + c]) {
                     case EMPTY:
                         if ((moveMask >>> (r * 8 + c) & 1) == 1) {
@@ -218,7 +266,7 @@ public class State implements Serializable {
                         break;
                 }
             }
-            s.append('|');
+            s.append('│');
             s.append("\n");
         }
         s.append("\033[0m"); // reset

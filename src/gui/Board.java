@@ -73,7 +73,7 @@ public class Board {
                 if (disk.getCircle().getFill().equals(Color.OLIVE) || disk.getCircle().getFill().equals(Color.GREEN)) {
                     // If it is a valid move, update the board and switch the player's color.
                     if (parent.state.isLegalMove(disk.getIndex()) &&
-                            (parent.state.movingColor == parent.playerColor || !parent.isLocalMultiplayer())) {
+                            (parent.state.movingColor == parent.playerColor || parent.isLocalMultiplayer())) {
                         if (parent.isLocalMultiplayer()) {
                             System.out.println("Disc got a valid local multiplayer move!");
                             parent.state = parent.state.makeMove(disk.getIndex());
@@ -86,7 +86,8 @@ public class Board {
                             parent.state = parent.state.makeMove(disk.getIndex());
                             System.out.println(parent.state);
                             new Thread(() -> {
-                                var move = parent.ai.findMove(parent.state, parent.playerColor.invert());
+                                var move = parent.ai.findMove(parent.state, parent.state.movingColor);
+//                                var move = parent.ai.findMove(parent.state, parent.playerColor.invert());
                                 parent.state = parent.state.makeMove(move);
                                 Platform.runLater(parent::update);
                             }).start();
