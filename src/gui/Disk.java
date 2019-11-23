@@ -9,7 +9,6 @@ import javafx.scene.shape.Circle;
 public class Disk {
     private Circle circle;
     private int index;
-    private boolean flipping;
 
     /**
      * @param circle used for drawing
@@ -18,7 +17,6 @@ public class Disk {
     public Disk(Circle circle, int index) {
         this.circle = circle;
         this.index = index;
-        flipping = false;
     }
 
     /**
@@ -33,13 +31,5 @@ public class Disk {
      */
     public int getIndex() {
         return index;
-    }
-
-    public void setFlipping(boolean flipping) {
-        this.flipping = flipping;
-    }
-
-    public boolean isFlipping() {
-        return flipping;
     }
 }
