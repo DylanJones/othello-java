@@ -3,17 +3,61 @@ package engine;
 import static engine.Color.*;
 
 public class Minimax implements SearchAlgorithm {
+    protected int maxDepth;
+    protected long milliseconds;
+    protected boolean alphaBeta;
+
+    protected long cutoffTime;
+
+    public Minimax() {
+        this(15, 5000, true);
+    }
+
+    public Minimax(int maxDepth, long milliseconds, boolean alphaBeta) {
+        this.maxDepth = maxDepth;
+        this.milliseconds = milliseconds;
+        this.alphaBeta = alphaBeta;
+    }
+
+    public int getMaxDepth() {
+        return maxDepth;
+    }
+
+    public void setMaxDepth(int maxDepth) {
+        if (maxDepth < 1)
+            maxDepth = 1;
+        this.maxDepth = maxDepth;
+    }
+
+    public boolean getAlphaBeta() {
+        return alphaBeta;
+    }
+
+    public void setAlphaBeta(boolean alphaBeta) {
+        this.alphaBeta = alphaBeta;
+    }
+
     @Override
     public int findMove(State state, Color color) {
         // TODO iterative deepening?
-        return findMove(state, color, 8);
+        cutoffTime = System.currentTimeMillis() + this.milliseconds;
+        int depth = 1;
+        int move = -1;
+        while (System.currentTimeMillis() < cutoffTime && depth < this.maxDepth) {
+//            System.out.println("t: " + (milliseconds - (cutoffTime - System.currentTimeMillis())));
+//            System.out.println("d: " + (depth));
+            int tmpMove = findMove(state, color, depth++);
+            if (tmpMove != -1) {
+                move = tmpMove;
+            }
+        }
+        return move;
     }
 
     @Override
     public int findMove(State state, Color color, int depth) {
         int bestMove = 0;
         int bestMmx = Integer.MIN_VALUE; // TODO figure out why this is so _bad_
-        System.out.println("Minimax input color: " + color);
         for (int i = 0; i < 64; i++) {
             if ((1L << i & state.moveMask) == 0) {
                 continue;
@@ -24,15 +68,14 @@ public class Minimax implements SearchAlgorithm {
                 bestMmx = mmx;
                 bestMove = i;
             }
-            System.out.println(s);
-            System.out.println(s.heuristic(color));
-            System.out.println(mmx);
+            if (System.currentTimeMillis() > cutoffTime) {
+                return -1;
+            }
         }
         return bestMove;
     }
 
     private int alphaBeta(State state, Color color, int alpha, int beta, int depth) {
-//        System.out.println("\t".repeat(2-depth) + state.toString().replace("\n", "\n" + "\t".repeat(2-depth)));
         if (state.movingColor == EMPTY || depth == 0) {
             return state.heuristic(color);
         }
@@ -46,7 +89,7 @@ public class Minimax implements SearchAlgorithm {
                 best = Math.min(best, mmx);
                 beta = Math.min(best, beta);
             }
-            if (beta <= alpha) { // alpha-beta cutoff
+            if (alpha >= beta && alphaBeta) { // alpha-beta cutoff
                 break;
             }
         }
@@ -54,16 +97,6 @@ public class Minimax implements SearchAlgorithm {
     }
 
     public static void main(String... args) {
-//        State s = new State(Board.fromBoxBoard(new Color[]{
-//                EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//                EMPTY, EMPTY, WHITE, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//                EMPTY, EMPTY, WHITE, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//                EMPTY, EMPTY, WHITE, BLACK, WHITE, EMPTY, EMPTY, EMPTY,
-//                EMPTY, EMPTY, EMPTY, WHITE, BLACK, EMPTY, EMPTY, EMPTY,
-//                EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//                EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//                EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//        }), WHITE);
         State s = new State(Board.fromBoxBoard(new Color[]{
                 EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
                 WHITE, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
