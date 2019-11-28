@@ -24,11 +24,13 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage stage) {
+        // Initialize the Menu prompt for the game.
         Alert alert = new Alert(AlertType.NONE);
         alert.setTitle("CS 211-H01 Final Project");
         alert.setHeaderText("Othello Game - Dylan Jones, Minh Vu");
         alert.setContentText("Please Select The Game Mode");
 
+        // Add buttons for the player to select the game mode.
         ButtonType singleplayer = new ButtonType("Singleplayer");
         ButtonType multiplayer = new ButtonType("Local Multiplayer");
         ButtonType online = new ButtonType("Online Multiplayer");
@@ -36,6 +38,7 @@ public class Main extends Application {
 
         alert.getButtonTypes().setAll(singleplayer, multiplayer, online, cancel);
 
+        // Process the player's response to the prompt.
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get().equals(singleplayer)) {
             // Prompt player for color.
@@ -48,15 +51,14 @@ public class Main extends Application {
             if (color_result.get().equals(black)) {
                 new Game(stage, 600, 600, 8, 8, new Minimax());
             } else if (color_result.get().equals(white)) {
-
                 new Game(stage, 600, 600, 8, 8, new Minimax());
             }
+
             System.out.println("Starting a new singleplayer game...");
-
-
         } else if (result.get().equals(multiplayer)) {
             new Game(stage, 600, 600, 8, 8);
         } else if (result.get().equals(online)) {
+            // Start the client and try to connect to the server.
             try {
                 Client c = new Client("localhost");
                 new Game(stage, 600, 600, 8, 8, c);
