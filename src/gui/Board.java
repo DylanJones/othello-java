@@ -74,7 +74,7 @@ public class Board {
                 // Ensure that the selected location of the player is an open tile.
                 if (disk.getCircle().getFill().equals(Color.OLIVE) || disk.getCircle().getFill().equals(Color.GREEN)) {
                     // If it is a valid move, update the board and switch the player's color.
-                    if (parent.state.isLegalMove(disk.getIndex()) && (parent.state.movingColor == parent.playerColor || parent.isLocalMultiplayer())) {
+                    if (parent.state.isLegalMove(disk.getIndex()) && (parent.state.movingColor == parent.getPlayerColor() || parent.isLocalMultiplayer())) {
                         long timeElapsed = System.currentTimeMillis();
 
                         // Prevents player from moving before animation is complete.

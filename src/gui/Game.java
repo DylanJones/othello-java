@@ -3,11 +3,8 @@ package gui;
 import engine.Color;
 import engine.SearchAlgorithm;
 import engine.State;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -16,12 +13,11 @@ import network.Client;
 import java.awt.*;
 
 import static engine.Color.BLACK;
-import static engine.Color.WHITE;
 
 public class Game {
     private Stage stage;
     private Scene scene;
-    public Color playerColor;
+    private Color playerColor;
     public State state;
 
     private Group root;
@@ -36,11 +32,10 @@ public class Game {
     public SearchAlgorithm ai;
 
     private final int lowerUI = 30;
-    private final int rightUI = 100;
+    private final int rightUI = 0;
     private final int padding = 10;
 
     private Text movingText;
-    private ComboBox comboBox;
 
     /**
      * Start the game and initialize everything
@@ -65,15 +60,26 @@ public class Game {
         scene = new Scene(root, windowSize.width + rightUI, windowSize.height + lowerUI);
         stage.setScene(scene);
         stage.show();
+
         this.localMultiplayer = true;
         this.online = false;
 
-        movingText = new Text(padding, windowHeight + padding * 2, "");
+        movingText = new Text(padding, windowHeight + lowerUI / 2 + 0.75 * padding, "");
         movingText.setStyle("-fx-font: " + padding * 2 + " arial;");
 
         update();
     }
 
+    /**
+     * Constructor for online multiplayer.
+     *
+     * @param stage        the JavaFX stage
+     * @param windowWidth  the width of the window in pixels
+     * @param windowHeight the height of the window in pixels
+     * @param boardWidth   the number of tiles on the board horizontally
+     * @param boardHeight  the number of tiles on the board vertically
+     * @param client       the player's client
+     */
     public Game(Stage stage, int windowWidth, int windowHeight, int boardWidth, int boardHeight, Client client) {
         this(stage, windowWidth, windowHeight, boardWidth, boardHeight);
         this.client = client;
@@ -82,14 +88,21 @@ public class Game {
         client.attachGame(this);
     }
 
+    /**
+     * Constructor for singleplayer vs ai.
+     *
+     * @param stage        the JavaFX stage
+     * @param windowWidth  the width of the window in pixels
+     * @param windowHeight the height of the window in pixels
+     * @param boardWidth   the number of tiles on the board horizontally
+     * @param boardHeight  the number of tiles on the board vertically
+     * @param ai           the type of search algorithm used by the ai
+     */
     public Game(Stage stage, int windowWidth, int windowHeight, int boardWidth, int boardHeight, SearchAlgorithm ai) {
         this(stage, windowWidth, windowHeight, boardWidth, boardHeight);
         this.ai = ai;
         this.localMultiplayer = false;
-        playerColor = WHITE;
-
-        ObservableList<String> options = FXCollections.observableArrayList("Minimax", "Alphabeta");
-        comboBox = new ComboBox(options);
+        playerColor = Color.WHITE;
     }
 
     /**
@@ -125,9 +138,21 @@ public class Game {
         root.getChildren().addAll(board.getTiles());
         root.getChildren().addAll(board.getDisks());
         root.getChildren().add(movingText);
+    }
 
-        if (!online && !localMultiplayer) {
-            root.getChildren().add(comboBox);
-        }
+    /**
+     * Get the player's color
+     * @return black of white
+     */
+    public Color getPlayerColor() {
+        return playerColor;
+    }
+
+    /**
+     * Set the player color
+     * @param color black or white
+     */
+    public void setPlayerColor(Color color) {
+        this.playerColor = color;
     }
 }

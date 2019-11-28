@@ -35,7 +35,7 @@ public class Client implements Runnable {
                 switch (command) {
                     case "get_move":
                         ourColor = Color.valueOf(line[1]);
-                        game.playerColor = ourColor;
+                        game.setPlayerColor(ourColor);
                         System.out.println("Getting ourselves a move - we are " + ourColor);
                         waitingForMove = true;
                         while (waitingForMove) {
