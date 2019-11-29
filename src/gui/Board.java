@@ -143,7 +143,7 @@ public class Board {
 
 
     /**
-     * Change all the colors of the tiles according to int board[];
+     * Change all the colors of the tiles according to state
      */
     public void update() {
         engine.Color[] board = parent.state.board.toBoxBoard();

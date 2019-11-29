@@ -6,13 +6,10 @@ import engine.State;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import network.Client;
 
 import java.awt.*;
-
-import static engine.Color.BLACK;
 
 public class Game {
     private Stage stage;
@@ -33,9 +30,8 @@ public class Game {
 
     private final int lowerUI = 30;
     private final int rightUI = 0;
-    private final int padding = 10;
 
-    private Text movingText;
+    private UserInterface userInterface;
 
     /**
      * Start the game and initialize everything
@@ -58,14 +54,12 @@ public class Game {
         root.getChildren().addAll(board.getTiles());
         root.getChildren().addAll(board.getDisks());
         scene = new Scene(root, windowSize.width + rightUI, windowSize.height + lowerUI);
+        userInterface = new UserInterface(windowWidth, windowHeight, lowerUI);
         stage.setScene(scene);
         stage.show();
 
         this.localMultiplayer = true;
         this.online = false;
-
-        movingText = new Text(padding, windowHeight + lowerUI / 2 + 0.75 * padding, "");
-        movingText.setStyle("-fx-font: " + padding * 2 + " arial;");
 
         update();
     }
@@ -124,8 +118,8 @@ public class Game {
      * Used to update the game board with new positions and repaint()
      */
     public void update() {
-        movingText.setText((state.movingColor == BLACK ? "BLACK" : "WHITE") + " IS MOVING");
         board.update();
+        userInterface.update(state);
         repaint();
     }
 
@@ -137,7 +131,7 @@ public class Game {
         root.getChildren().clear();
         root.getChildren().addAll(board.getTiles());
         root.getChildren().addAll(board.getDisks());
-        root.getChildren().add(movingText);
+        root.getChildren().addAll(userInterface.getUI());
     }
 
     /**
