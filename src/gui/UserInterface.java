@@ -21,11 +21,18 @@ public class UserInterface {
 
     private final int padding = 10;
 
+    /**
+     * Construct the UI.
+     *
+     * @param windowWidth  window width
+     * @param windowHeight window height
+     * @param height       the height of the UI section
+     */
     public UserInterface(int windowWidth, int windowHeight, int height) {
         movingText = new Text(padding, windowHeight + height / 2 + 0.75 * padding, "");
         movingText.setStyle("-fx-font: " + padding * 2 + " arial;");
-        blackCircle = new Circle(600 * 3 / 4 + height * 9 / 20, windowHeight + height / 2, height * 9 / 20);
-        whiteCircle = new Circle(600 * 7 / 8 + blackCircle.getRadius(), blackCircle.getCenterY(), blackCircle.getRadius() - 1);
+        blackCircle = new Circle(windowWidth * 3 / 4 + height * 9 / 20, windowHeight + height / 2, height * 9 / 20);
+        whiteCircle = new Circle(windowWidth * 7 / 8 + blackCircle.getRadius(), blackCircle.getCenterY(), blackCircle.getRadius() - 1);
         whiteCircle.setFill(javafx.scene.paint.Color.WHITE);
         whiteCircle.setStrokeWidth(1.0);
         whiteCircle.setStroke(Paint.valueOf("BLACK"));
@@ -38,6 +45,11 @@ public class UserInterface {
         ui.addAll(movingText, blackCounter, whiteCounter, blackCircle, whiteCircle);
     }
 
+    /**
+     * Update the user interface so that the number of disks per player are displayed correctly.
+     *
+     * @param state the game state
+     */
     public void update(State state) {
         movingText.setText((state.movingColor == BLACK ? "BLACK" : "WHITE") + " IS MOVING");
 
@@ -56,6 +68,11 @@ public class UserInterface {
         whiteCounter.setText("" + white);
     }
 
+    /**
+     * Get the UI for drawing.
+     *
+     * @return the list of all UI components
+     */
     public ObservableList getUI() {
         return ui;
     }
