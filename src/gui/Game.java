@@ -119,7 +119,7 @@ public class Game {
      */
     public void update() {
         board.update();
-        userInterface.update(state);
+        userInterface.update(this);
         repaint();
     }
 

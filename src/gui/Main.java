@@ -8,12 +8,16 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import network.Client;
-import network.Server;
 
 import java.io.IOException;
 import java.util.Optional;
 
 public class Main extends Application {
+    /**
+     * Entry point for the JavaFX application.
+     *
+     * @param args command line arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }
