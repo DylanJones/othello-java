@@ -134,9 +134,7 @@ public class Board {
             disk.getCircle().setFill(disk.getCircle().getFill().equals(Color.BLACK) ? Color.WHITE : Color.BLACK);
             flip.setFromAngle(90);
             flip.setToAngle(180);
-            flip.setOnFinished(f -> {
-                flipping = false;
-            });
+            flip.setOnFinished(f -> flipping = false);
             flip.play();
         });
     }
