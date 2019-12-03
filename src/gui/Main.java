@@ -47,7 +47,7 @@ public class Main extends Application {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get().equals(singleplayer)) {
             // Prompt player for color.
-            alert.setContentText("Please Select Your Color");
+           /* alert.setContentText("Please Select Your Color");
             ButtonType black = new ButtonType("Black");
             ButtonType white = new ButtonType("White");
             alert.getButtonTypes().setAll(black, white, cancel);
@@ -57,9 +57,10 @@ public class Main extends Application {
                 new Game(stage, 600, 600, 8, 8, new Minimax());
             } else if (color_result.get().equals(white)) {
                 new Game(stage, 600, 600, 8, 8, new Minimax());
-            }
+            }*/
 
             System.out.println("Starting a new singleplayer game...");
+            new Game(stage, 600, 600, 8, 8, new Minimax());
         } else if (result.get().equals(multiplayer)) {
             new Game(stage, 600, 600, 8, 8);
         } else if (result.get().equals(online)) {
