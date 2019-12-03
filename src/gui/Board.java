@@ -89,13 +89,7 @@ public class Board {
                             System.out.println("Disc got a valid move against an AI!");
                             parent.state = parent.state.makeMove(disk.getIndex());
                             System.out.println(parent.state);
-                            new Thread(() -> {
-                                var move = parent.ai.findMove(parent.state, parent.state.movingColor);
-//                                var move = parent.ai.findMove(parent.state, parent.playerColor.invert());
-                                waitForMove(timeElapsed);
-                                parent.state = parent.state.makeMove(move);
-                                Platform.runLater(parent::update);
-                            }).start();
+                            new Thread(() -> aiMove(timeElapsed)).start();
                         }
                     }
                 }
@@ -104,6 +98,17 @@ public class Board {
             });
             disks[i] = disk;
         }
+    }
+    private void aiMove(long timeElapsed) {
+            var move = parent.ai.findMove(parent.state, parent.state.movingColor);
+//                                var move = parent.ai.findMove(parent.state, parent.playerColor.invert());
+            waitForMove(timeElapsed);
+            parent.state = parent.state.makeMove(move);
+            Platform.runLater(parent::update);
+
+            if (parent.state.movingColor == parent.getPlayerColor().invert()) {
+                new Thread(() -> aiMove(0)).start();
+            }
     }
 
     private void waitForMove(long timeElapsed) {
