@@ -103,7 +103,7 @@ public class State implements Serializable {
     /* HEURISTIC FUNCTIONS */
     public int heuristic(Color c) {
         if (movingColor == EMPTY) {
-            return countColor(c) > 0 ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+            return countColor(c) > 0 ? Integer.MAX_VALUE - 1 : Integer.MIN_VALUE + 1;
         }
         return weightSquare(c);
     }

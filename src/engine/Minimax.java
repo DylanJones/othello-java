@@ -10,7 +10,7 @@ public class Minimax implements SearchAlgorithm {
     protected long cutoffTime;
 
     public Minimax() {
-        this(15, 5000, true);
+        this(15, 2000, true);
     }
 
     public Minimax(int maxDepth, long milliseconds, boolean alphaBeta) {
@@ -39,7 +39,6 @@ public class Minimax implements SearchAlgorithm {
 
     @Override
     public int findMove(State state, Color color) {
-        // TODO iterative deepening?
         cutoffTime = System.currentTimeMillis() + this.milliseconds;
         int depth = 1;
         int move = -1;
@@ -97,15 +96,25 @@ public class Minimax implements SearchAlgorithm {
     }
 
     public static void main(String... args) {
+//        State s = new State(Board.fromBoxBoard(new Color[]{
+//                EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//                WHITE, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//                EMPTY, WHITE, EMPTY, EMPTY, EMPTY, WHITE, EMPTY, EMPTY,
+//                EMPTY, BLACK, WHITE, WHITE, WHITE, WHITE, EMPTY, EMPTY,
+//                EMPTY, BLACK, EMPTY, BLACK, WHITE, WHITE, EMPTY, EMPTY,
+//                EMPTY, EMPTY, EMPTY, BLACK, EMPTY, EMPTY, EMPTY, EMPTY,
+//                EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//                EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        }), BLACK);
         State s = new State(Board.fromBoxBoard(new Color[]{
-                EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-                WHITE, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-                EMPTY, WHITE, EMPTY, EMPTY, EMPTY, WHITE, EMPTY, EMPTY,
-                EMPTY, BLACK, WHITE, WHITE, WHITE, WHITE, EMPTY, EMPTY,
-                EMPTY, BLACK, EMPTY, BLACK, WHITE, WHITE, EMPTY, EMPTY,
-                EMPTY, EMPTY, EMPTY, BLACK, EMPTY, EMPTY, EMPTY, EMPTY,
-                EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-                EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+                EMPTY, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, EMPTY,
+                EMPTY, EMPTY, BLACK, BLACK, WHITE, BLACK, EMPTY, EMPTY,
+                BLACK, BLACK, BLACK, BLACK, BLACK, WHITE, BLACK, BLACK,
+                BLACK, BLACK, WHITE, BLACK, BLACK, BLACK, BLACK, BLACK,
+                BLACK, WHITE, BLACK, WHITE, BLACK, BLACK, BLACK, BLACK,
+                BLACK, BLACK, WHITE, WHITE, BLACK, BLACK, BLACK, BLACK,
+                EMPTY, EMPTY, EMPTY, WHITE, BLACK, BLACK, EMPTY, EMPTY,
+                EMPTY, EMPTY, EMPTY, WHITE, WHITE, WHITE, WHITE, EMPTY
         }), BLACK);
         Minimax mm = new Minimax();
         s = s.makeMove(mm.findMove(s, BLACK));
