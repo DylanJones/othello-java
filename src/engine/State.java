@@ -4,6 +4,10 @@ import java.io.Serializable;
 
 import static engine.Color.*;
 
+/**
+ * The State class represents an abstract game state in its entirety - the board, who's moving, what legal moves are
+ * available, etc.  The vast majority of the game logic is also contained in this class.
+ */
 public class State implements Serializable {
     // Weight matrix for a basic heuristic function.
     private final static int[] SQUARE_WEIGHTS = new int[]{
@@ -100,21 +104,37 @@ public class State implements Serializable {
         return flip | flip >>> dir; // final smear isn't masked to allow it to go outside the bounds
     }
 
-    /* HEURISTIC FUNCTIONS */
+    /**
+     * General heuristic function that evaluates how "good" the game state is for the given player.
+     * @param c the player to evaluate for
+     * @return the heuristic score of the state
+     */
     public int heuristic(Color c) {
         if (movingColor == EMPTY) {
             return countColor(c) > 0 ? Integer.MAX_VALUE - 1 : Integer.MIN_VALUE + 1;
         }
-        return weightSquare(c);
+        int stage = Long.bitCount(board.blackMask | board.whiteMask);
+        double score = (stage / 64.0) * weightSquare(c) + (64.0 / stage) * mobility(c);
+        return (int) score;
     }
 
-    public int countColor(Color c) {
+    /**
+     * Count the difference in owned pieces.  Equivalent to popcnt(us) - popcnt(them)
+     * @param c the player to evaluate for
+     * @return the difference in owned pieces
+     */
+    private int countColor(Color c) {
         int x = Long.bitCount(board.blackMask) - Long.bitCount(board.whiteMask);
         if (c == WHITE) x *= -1;
         return x;
     }
 
-    public int weightSquare(Color c) {
+    /**
+     * Apply the "weight square" heuristic to the board.
+     * @param c the player to evaluate for
+     * @return the heuristic value
+     */
+    private int weightSquare(Color c) {
         int out = 0;
         for (int i = 0; i < 64; i++) {
             if ((board.blackMask << i & 1) == 1) {
@@ -126,6 +146,19 @@ public class State implements Serializable {
         if (c == Color.WHITE)
             out *= -1;
         return out;
+    }
+
+    /**
+     * how many moves can I make?
+     * @param c the player to evaluate for
+     * @return the number of legal moves
+     */
+    private int mobility(Color c) {
+        int m = Long.bitCount(moveMask);
+        if (c != movingColor) {
+            m *= -1;
+        }
+        return m;
     }
 
     // util methods
@@ -158,6 +191,12 @@ public class State implements Serializable {
         return c;
     }
 
+    /**
+     * Given the index of a move to make, return a new board where that move has been made.
+     * @param idx the index of the move to make
+     * @return a game state where the move has been made
+     * @throws RuntimeException if the move is invalid
+     */
     public State makeMove(int idx) {
         long piece = 1L << idx;
         long flipped = piece;
@@ -227,6 +266,10 @@ public class State implements Serializable {
     }
 
 
+    /**
+     * Get the inital state of the board.
+     * @return the starting state
+     */
     public static State getStartingState() {
         return new State(0b00000000000000000001000000001000000000000000000000000000L, 0b00000000000000000000100000010000000000000000000000000000L, WHITE);
     }

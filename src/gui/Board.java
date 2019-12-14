@@ -113,7 +113,7 @@ public class Board {
 
     private void waitForMove(long timeElapsed) {
         long timeDifference = System.currentTimeMillis() - timeElapsed;
-        System.out.println(timeDifference);
+//        System.out.println(timeDifference);
         if (timeDifference < animationTime) {
             try {
                 Thread.sleep(animationTime - timeDifference);

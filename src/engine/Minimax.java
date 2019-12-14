@@ -2,12 +2,7 @@ package engine;
 
 import static engine.Color.*;
 
-public class Minimax implements SearchAlgorithm {
-    protected int maxDepth;
-    protected long milliseconds;
-    protected boolean alphaBeta;
-
-    protected long cutoffTime;
+public class Minimax extends SearchAlgorithm {
 
     public Minimax() {
         this(15, 2000, true);
@@ -19,44 +14,10 @@ public class Minimax implements SearchAlgorithm {
         this.alphaBeta = alphaBeta;
     }
 
-    public int getMaxDepth() {
-        return maxDepth;
-    }
-
-    public void setMaxDepth(int maxDepth) {
-        if (maxDepth < 1)
-            maxDepth = 1;
-        this.maxDepth = maxDepth;
-    }
-
-    public boolean getAlphaBeta() {
-        return alphaBeta;
-    }
-
-    public void setAlphaBeta(boolean alphaBeta) {
-        this.alphaBeta = alphaBeta;
-    }
-
-    @Override
-    public int findMove(State state, Color color) {
-        cutoffTime = System.currentTimeMillis() + this.milliseconds;
-        int depth = 1;
-        int move = -1;
-        while (System.currentTimeMillis() < cutoffTime && depth < this.maxDepth) {
-//            System.out.println("t: " + (milliseconds - (cutoffTime - System.currentTimeMillis())));
-//            System.out.println("d: " + (depth));
-            int tmpMove = findMove(state, color, depth++);
-            if (tmpMove != -1) {
-                move = tmpMove;
-            }
-        }
-        return move;
-    }
-
     @Override
     public int findMove(State state, Color color, int depth) {
         int bestMove = 0;
-        int bestMmx = Integer.MIN_VALUE; // TODO figure out why this is so _bad_
+        int bestMmx = Integer.MIN_VALUE;
         for (int i = 0; i < 64; i++) {
             if ((1L << i & state.moveMask) == 0) {
                 continue;
@@ -74,6 +35,20 @@ public class Minimax implements SearchAlgorithm {
         return bestMove;
     }
 
+    public boolean getAlphaBeta() {
+        return alphaBeta;
+    }
+
+    public void setAlphaBeta(boolean alphaBeta) {
+        this.alphaBeta = alphaBeta;
+    }
+
+    /**
+     * Using alpha-beta or minimax, recursively search for the optimal move for the given player.
+     * Return value is an indication of how "good" each move is, with higher values being better for the
+     * player and lower values being worse.
+     * @return the minimax value
+     */
     private int alphaBeta(State state, Color color, int alpha, int beta, int depth) {
         if (state.movingColor == EMPTY || depth == 0) {
             return state.heuristic(color);

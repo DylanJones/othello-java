@@ -1,11 +1,13 @@
 package engine;
 
 import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.function.Consumer;
 
+/**
+ * The engine.Board class represents the abstract concept of an Othello board.
+ * The board is stored as two 64-bit bitmasks - one for black, one for white.  The board
+ * also contains
+ */
 public class Board implements Iterable<Color> {
-
     // Bitboard representation - the only fields on this object should be black and white bitmasks and the moving player
     public final long blackMask;
     public final long whiteMask;
@@ -76,17 +78,5 @@ public class Board implements Iterable<Color> {
                 }
             }
         };
-    }
-
-    @Override
-    public void forEach(Consumer<? super Color> action) {
-        for (Color c : this) {
-            action.accept(c);
-        }
-    }
-
-    @Override
-    public Spliterator<Color> spliterator() {
-        throw new RuntimeException("spliterator not implemented");
     }
 }

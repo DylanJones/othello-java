@@ -3,12 +3,13 @@ package engine;
 import static engine.Color.*;
 import static engine.Color.BLACK;
 
-public class PrincipalVariationSearch extends Minimax {
+public class PrincipalVariationSearch extends SearchAlgorithm {
     public PrincipalVariationSearch() {
     }
 
     public PrincipalVariationSearch(int maxDepth, long milliseconds) {
-        super(maxDepth, milliseconds, false);
+        this.maxDepth = maxDepth;
+        this.milliseconds = milliseconds;
     }
 
     @Override
